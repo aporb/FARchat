@@ -19,12 +19,16 @@ Navigate to the project root and install the required Python dependencies:
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-pip install supabase beautifulsoup4 requests openai
+pip install supabase beautifulsoup4 lxml openai python-dotenv tqdm
 ```
+
+> [!NOTE]
+> `lxml` is recommended for BeautifulSoup to handle XML map parsing efficiently.
+> `tqdm` provides a progress bar which is helpful when ingesting thousands of sections.
 
 ## 2. Configure Environment Variables
 
-Create a `.env` file in the root directory (or export them in your terminal):
+Create a `scripts/.env` file with the following:
 
 ```bash
 SUPABASE_URL=https://your-project.supabase.co
@@ -51,18 +55,28 @@ CREATE OR REPLACE FUNCTION match_documents (
 
 ## 3. Run Ingestion
 
-The ingestion script `scripts/ingest_far.py` is currently a robust scaffold. To run the initial ingestion:
+### Option A: Ingest Everything (Recommended)
+The `scripts/ingest_all.py` script automatically discovers all regulations in `source_content/`.
+
+```bash
+cd scripts
+source venv/bin/activate
+python ingest_all.py
+```
+
+### Option B: Ingest Specific Regulation
+Use `scripts/ingest_far.py` for targeted ingestion (e.g. just FAR or DFARS).
 
 ```bash
 python scripts/ingest_far.py
 ```
 
-### What the script does:
-1.  **Fetches**: Downloads FAR content from acquisition.gov.
-2.  **Parses**: Uses BeautifulSoup to extract text.
-3.  **Chunks**: Splits the text by Subpart to maintain regulatory context.
-4.  **Embeds**: Calls OpenAI to generate 1536-dimensional vectors.
-5.  **Stores**: Upserts the content and vectors into Supabase.
+### What the scripts do:
+1.  **Discovery**: Scans `source_content` for `*_dita` and `*_dita_html` directory pairs.
+2.  **Traverses**: Reads `.ditamap` files to build a legal hierarchy.
+3.  **Parses**: Extracts text from `.html` files (preferring HTML over raw DITA for cleaner text).
+4.  **Embeds**: Generates vectors via OpenRouter.
+5.  **Stores**: Upserts content and vectors into Supabase.
 
 ## 4. Verification
 

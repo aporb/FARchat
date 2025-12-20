@@ -6,6 +6,8 @@ import lxml.etree as ET
 from bs4 import BeautifulSoup
 from supabase import create_client, Client
 from openai import OpenAI
+from tqdm import tqdm
+
 try:
     from dotenv import load_dotenv
     # Look for .env in the same directory as this script
@@ -34,22 +36,14 @@ class DitaMapParser:
 
     def walk(self) -> Generator[Dict, None, None]:
         """Traverses the DITA map and yields metadata + path for each relevant topic."""
-        # Stack for hierarchy tracking: (level, title, type)
-        hierarchy = []
-
         for event, elem in ET.iterwalk(self.root, events=("start", "end")):
             if event == "start" and elem.tag == "topicref":
                 title = elem.get("navtitle", "")
                 output_class = elem.get("outputclass", "")
                 href = elem.get("href", "")
 
-                # Skip non-content refs
                 if not title and not href:
                     continue
-
-                # Update hierarchy
-                # Note: This is a simplification. A real DITA parser would be more complex.
-                # Here we assume the natural order of topicrefs defines hierarchy.
                 
                 meta = {
                     "regulation": self.regulation_name,
@@ -72,32 +66,16 @@ class HtmlContentExtractor:
     def extract_text(html_path: Path) -> str:
         with open(html_path, 'r', encoding='utf-8') as f:
             soup = BeautifulSoup(f, 'lxml')
-            
-            # Remove nav and boilerplate
             for nav in soup.find_all('nav'):
                 nav.decompose()
-            
-            # Extract main content
             main = soup.find('main') or soup.find('article') or soup.body
             if not main:
                 return ""
-            
-            # Preserve some structure with spaces
             return main.get_text(separator=' ', strip=True)
 
-def get_embedding(text: str) -> List[float]:
+def get_embedding(text: str, client: OpenAI) -> List[float]:
     """Generates embeddings using OpenRouter."""
-    if not OPENROUTER_API_KEY:
-        raise ValueError("OPENROUTER_API_KEY not set")
-        
-    client = OpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=OPENROUTER_API_KEY,
-    )
-    
-    # Clean text
     text = text.replace("\n", " ")
-    
     response = client.embeddings.create(
         input=[text],
         model=EMBEDDING_MODEL,
@@ -105,7 +83,11 @@ def get_embedding(text: str) -> List[float]:
     )
     return response.data[0].embedding
 
-def process_regulation(map_name: str, map_dir: str, html_dir: str):
+def process_regulation(reg_info: Dict, supabase: Client, openai_client: OpenAI):
+    map_name = reg_info["map_name"]
+    map_dir = reg_info["map_dir"]
+    html_dir = reg_info["html_dir"]
+    
     map_path = SOURCE_ROOT / map_dir / f"{map_name}.ditamap"
     html_path = SOURCE_ROOT / html_dir
     
@@ -113,56 +95,86 @@ def process_regulation(map_name: str, map_dir: str, html_dir: str):
         print(f"Skipping {map_name}: Map not found at {map_path}")
         return
 
-    print(f"--- Processing {map_name} ---")
+    print(f"\n🚀 Processing {map_name} from {map_dir}...")
     parser = DitaMapParser(map_path, html_path)
-    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
     
-    count = 0
+    items = list(parser.walk())
     limit = int(os.environ.get("INGEST_LIMIT", "0"))
-    
-    for item in parser.walk():
-        if limit > 0 and count >= limit:
-            print(f"Limit of {limit} reached for {map_name}. Stopping.")
-            break
+    if limit > 0:
+        items = items[:limit]
+        print(f"Limit applied: only first {limit} items will be processed.")
+
+    for item in tqdm(items, desc=f"Ingesting {map_name}"):
         meta = item["metadata"]
         html_file = item["html_path"]
-        
-        print(f"Ingesting: {meta['title']} ({html_file.name})")
         
         text = HtmlContentExtractor.extract_text(html_file)
         if not text or len(text) < 50:
             continue
             
         try:
-            embedding = get_embedding(text)
-            
+            embedding = get_embedding(text, openai_client)
             data = {
                 "content": text,
                 "metadata": meta,
                 "embedding": embedding
             }
-            
             supabase.table("document_chunks").insert(data).execute()
-            count += 1
-            if count % 10 == 0:
-                print(f"Inserted {count} chunks...")
         except Exception as e:
             print(f"Error processing {html_file.name}: {e}")
+
+def discover_regulations() -> List[Dict]:
+    """Automatically finds pairs of _dita and _dita_html folders."""
+    regs = []
+    # Known special mappings
+    special_maps = {
+        "DFARSPGI": "PGI",
+    }
+
+    folders = [f for f in SOURCE_ROOT.iterdir() if f.is_dir()]
+    dita_folders = [f for f in folders if f.name.endswith("_dita")]
+
+    for dita_dir in dita_folders:
+        base_name = dita_dir.name.replace("_dita", "")
+        html_dir_name = f"{base_name}_dita_html"
+        html_dir = SOURCE_ROOT / html_dir_name
+        
+        if html_dir.exists():
+            map_name = special_maps.get(base_name, base_name)
+            regs.append({
+                "name": base_name,
+                "map_name": map_name,
+                "map_dir": dita_dir.name,
+                "html_dir": html_dir_name
+            })
+    
+    return regs
 
 def main():
     if not SUPABASE_URL or not SUPABASE_KEY:
         print("Error: SUPABASE_URL and SUPABASE_KEY required in .env")
         return
 
-    # List of regulations to process
-    regulations = [
-        {"name": "FAR", "map_dir": "FAR_dita", "html_dir": "FAR_dita_html"},
-        {"name": "DFARS", "map_dir": "DFARS_dita", "html_dir": "DFARS_dita_html"},
-        # Add more as needed: AFARS, DAFFARS, etc.
-    ]
+    if not OPENROUTER_API_KEY:
+        print("Error: OPENROUTER_API_KEY required in .env")
+        return
+
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+    openai_client = OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=OPENROUTER_API_KEY,
+    )
+
+    regulations = discover_regulations()
+    
+    print(f"Found {len(regulations)} regulations for ingestion:")
+    for r in regulations:
+        print(f" - {r['name']} (Map: {r['map_name']})")
 
     for reg in regulations:
-        process_regulation(reg["name"], reg["map_dir"], reg["html_dir"])
+        process_regulation(reg, supabase, openai_client)
+
+    print("\n✅ Universal Ingestion Complete!")
 
 if __name__ == "__main__":
     main()
