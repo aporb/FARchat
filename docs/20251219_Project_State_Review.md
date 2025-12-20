@@ -1,0 +1,94 @@
+# FARchat Project State Review
+**Date:** December 19, 2025
+**Status:** ⚠️ Critical Architecture Discrepancy Identified
+
+---
+
+## 1. Executive Summary
+
+This review analyzes the current state of the FARchat repository compared to the planning documentation.
+
+**Critical Finding:** There is a fundamental divergence between the **Planning Strategy** and the **Current Codebase**.
+*   **The Plan:** call for a Python-based **Streamlit + FastAPI** RAG application ("Alpha v0.0.1") to be built over a weekend.
+*   **The Code:** currently contains a **Next.js 15 Landing Page** (`farchat-landing`) focused on marketing and alpha signup.
+*   **The Gap:** The actual RAG Chatbot application (Backend, Vector DB, Chat Interface) is **completely missing** from the current implementation in this repository.
+
+## 2. Repository Structure Analysis
+
+The repository currently consists of two distinct conceptual partitions that do not yet integrate:
+
+### A. The "Planned" Application (Virtual Entity)
+*   **Defined in:** `planning/*.md`
+*   **Tech Stack:** Python, Streamlit, FastAPI, ChromaDB, LangChain, Claude Sonnet 4.
+*   **Status:** **0% Implemented** (in this repo).
+*   **Missing Directories:** `backend/`, `frontend/`, `data/`, `chroma_db/`.
+
+### B. The "Actual" Application (Existing Entity)
+*   **Defined in:** `app/`
+*   **Tech Stack:** Next.js 15, React 19, Tailwind CSS 4, shadcn/ui.
+*   **Status:** **Partially Implemented**.
+*   **Present Directories:** `app/src/app` (Landing Page), `app/src/components` (UI Library).
+*   **Purpose:** Marketing landing page with waitlist functionality (`Waitlist` component).
+
+---
+
+## 3. Implementation Status Audit
+
+### ✅ Built: Landing Page (Next.js)
+The `app/` directory contains a modern, government-compliant marketing site.
+*   **Framework:** Next.js 15 App Router (`app/src/app/page.tsx`).
+*   **Styling:** Tailwind 4 with a "Federal Navy" theme (`globals.css`).
+*   **Components:** `Hero`, `Features`, `Trust`, `Waitlist`, `Footer`.
+*   **Deployment:** Configured for Vercel (manual deployment).
+*   **Completeness:** Appears to be a functional skeleton or MVP for the landing page.
+
+### ❌ Missing: RAG Chatbot (The Core Product)
+The core value proposition described in `00_executive_summary.md` is entirely absent.
+1.  **No Backend:** FastApi service for RAG logic is missing.
+2.  **No Vector Store:** ChromaDB implementation and PDF ingestion pipelines are missing.
+3.  **No Chat Interface:** The Streamlit UI (`02_frontend_architecture.md`) is missing.
+4.  **No RAG Pipeline:** Embedding generation and LangChain headers are missing.
+
+---
+
+## 4. Documentation vs. Reality Gap
+
+| Feature | Planned (Docs) | Actual (Repo) |
+| :--- | :--- | :--- |
+| **Repo Name** | `FARchat` | `farchat-landing` (in `package.json`) |
+| **Primary Interface** | Streamlit Chat UI | Next.js Landing Page |
+| **Backend Language** | Python (FastAPI) | TypeScript (Next.js) |
+| **Database** | ChromaDB (Vector) | None (Static/Client-side) |
+| **Deployment** | Docker / Local | Vercel (Manual) |
+
+**Note on `docs/FARchat_design_document.md`:**
+This document bridges the gap. While it describes the RAG tool in its executive summary, **Section 11 (Technical Implementation Guide)** explicitly pivots to describing the `farchat-landing` Next.js setup. This suggests the Landing Page was prioritized as "Phase 0" or "Marketing Phase" before the actual app build.
+
+---
+
+## 5. Recommendations & Immediate Next Steps
+
+To proceed with building the application described in the planning documents, major architectural decisions are needed.
+
+### Option A: Monorepo Approach (Recommended for Speed)
+Keep the Landing Page and build the RAG App in a parallel folder.
+1.  **Keep** `app/` as `marketing-site/`.
+2.  **Create** `backend/` (FastAPI + ChromaDB) for the core logic.
+3.  **Create** `platform/` (Streamlit or Next.js) for the actual Chat App.
+    *   *Decision:* The plan says Streamlit, but you already have a robust Next.js setup. You might consider building the Chat Interface within the existing Next.js app to unify the stack (using Python only for the backend API).
+
+### Option B: Strickland Compliance (Follow "Weekend Timeline")
+Adhere strictly to `planning/06_weekend_timeline.md` and ignore the Next.js app for now.
+1.  **Initialize** the Python environment.
+2.  **Scaffold** the FastAPI backend.
+3.  **Implement** the Streamlit UI.
+4.  **Result:** You will have a working prototype, but it will be separate from your nice marketing site.
+
+### Immediate Action Items
+1.  **Decide on Stack Integration:** Will the Chatbot be Streamlit (as planned) or integrated into the Next.js app (using the `app/` foundation)?
+2.  **Rename `app` folder:** Rename `app` to `landing-page` or similar to avoid confusion with the future application logic.
+3.  **Start Phase 1 (Backend):** Create the `backend/` directory and initialize the Python project structure defined in `planning/03_backend_architecture.md`.
+
+---
+
+**Generated by Antigravity on 2025-12-19.**
