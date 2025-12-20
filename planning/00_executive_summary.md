@@ -1,3 +1,6 @@
+> [!WARNING]
+> **DEPRECATED**: This document describes the legacy Python/Streamlit architecture. The project has pivoted to a Next.js/Supabase architecture. See `docs/` for current documentation.
+
 # FARchat v0.0.1 - Executive Summary & Quick Start Guide
 
 ## Project Overview
