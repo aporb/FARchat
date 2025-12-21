@@ -11,7 +11,7 @@ export type ActionState = {
 }
 
 export async function login(prevState: ActionState, formData: FormData): Promise<ActionState> {
-    const supabase = createSupabaseServerClient()
+    const supabase = await createSupabaseServerClient()
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
@@ -33,7 +33,7 @@ export async function login(prevState: ActionState, formData: FormData): Promise
 }
 
 export async function signup(prevState: ActionState, formData: FormData): Promise<ActionState> {
-    const supabase = createSupabaseServerClient()
+    const supabase = await createSupabaseServerClient()
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
@@ -61,7 +61,7 @@ export async function signup(prevState: ActionState, formData: FormData): Promis
 }
 
 export async function magicLinkLogin(prevState: ActionState, formData: FormData): Promise<ActionState> {
-    const supabase = createSupabaseServerClient()
+    const supabase = await createSupabaseServerClient()
     const email = formData.get('email') as string
 
     if (!email) {
@@ -87,7 +87,7 @@ export async function magicLinkLogin(prevState: ActionState, formData: FormData)
 }
 
 export async function signOut() {
-    const supabase = createSupabaseServerClient()
+    const supabase = await createSupabaseServerClient()
     await supabase.auth.signOut()
     revalidatePath('/', 'layout')
     redirect('/login')
@@ -97,7 +97,7 @@ export async function searchRegulations(query: string) {
     if (!query || query.length < 3) return { results: [] }
 
     try {
-        const supabase = createSupabaseServerClient()
+        const supabase = await createSupabaseServerClient()
 
         // Check Usage
         const { data: { user } } = await supabase.auth.getUser()
@@ -127,7 +127,7 @@ export async function searchRegulations(query: string) {
 }
 
 export async function getUserUsage() {
-    const supabase = createSupabaseServerClient()
+    const supabase = await createSupabaseServerClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return null
 

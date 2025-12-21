@@ -11,7 +11,7 @@ const TIER_LIMITS: Record<SubscriptionTier, number> = {
 }
 
 export async function checkAndIncrementUsage(userId: string) {
-    const supabase = createSupabaseServerClient()
+    const supabase = await createSupabaseServerClient()
 
     // 1. Get Profile Tier
     const { data: profile } = await supabase
@@ -65,7 +65,7 @@ export async function checkAndIncrementUsage(userId: string) {
 }
 
 export async function getUsageState(userId: string) {
-    const supabase = createSupabaseServerClient()
+    const supabase = await createSupabaseServerClient()
 
     // 1. Get Profile Tier
     const { data: profile } = await supabase
