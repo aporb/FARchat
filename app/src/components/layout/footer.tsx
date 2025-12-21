@@ -67,19 +67,14 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-gray-600 hover:text-federal-navy transition-colors">
-                  Blog
+                <Link href={ROUTES.alpha} className="text-gray-600 hover:text-federal-navy transition-colors">
+                  Alpha Program
                 </Link>
               </li>
               <li>
-                <Link href={ROUTES.contact} className="text-gray-600 hover:text-federal-navy transition-colors">
+                <a href={ROUTES.contact} className="text-gray-600 hover:text-federal-navy transition-colors">
                   Contact
-                </Link>
-              </li>
-              <li>
-                <Link href="/careers" className="text-gray-600 hover:text-federal-navy transition-colors">
-                  Careers
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -91,23 +86,18 @@ export function Footer() {
             </h3>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link href="/help" className="text-gray-600 hover:text-federal-navy transition-colors">
-                  Help Center
-                </Link>
-              </li>
-              <li>
-                <Link href="/resources" className="text-gray-600 hover:text-federal-navy transition-colors">
-                  Resources
-                </Link>
-              </li>
-              <li>
                 <a href={`mailto:${BRAND.supportEmail}`} className="text-gray-600 hover:text-federal-navy transition-colors">
-                  Support
+                  Email Support
                 </a>
               </li>
               <li>
-                <Link href="/status" className="text-gray-600 hover:text-federal-navy transition-colors">
-                  System Status
+                <Link href={LEGAL_LINKS.privacy} className="text-gray-600 hover:text-federal-navy transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href={LEGAL_LINKS.terms} className="text-gray-600 hover:text-federal-navy transition-colors">
+                  Terms of Service
                 </Link>
               </li>
             </ul>

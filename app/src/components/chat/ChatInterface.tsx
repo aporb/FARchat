@@ -83,7 +83,7 @@ export function ChatInterface() {
                     if (newMessages.length === 0) return newMessages
 
                     const lastMsgIndex = newMessages.length - 1
-                    const lastMessage = { ...newMessages[lastMsgIndex] }
+                    const lastMessage = { ...newMessages[lastMsgIndex] } as Message
 
                     if (lastMessage.role === 'assistant') {
                         lastMessage.content += text
@@ -118,7 +118,14 @@ export function ChatInterface() {
                 {/* Header / Top Bar */}
                 <header className="h-14 flex items-center px-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 sticky top-0 justify-between">
                     <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(!sidebarOpen)} className="md:flex hidden">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setSidebarOpen(!sidebarOpen)}
+                            className="md:flex hidden"
+                            aria-label={sidebarOpen ? "Close regulation explorer sidebar" : "Open regulation explorer sidebar"}
+                            aria-expanded={sidebarOpen}
+                        >
                             <Menu className="h-5 w-5" />
                         </Button>
                         <h1 className="font-semibold text-lg tracking-tight">FARchat <span className="text-primary text-xs ml-1 uppercase bg-primary/10 px-1.5 py-0.5 rounded">Beta</span></h1>
@@ -184,8 +191,13 @@ export function ChatInterface() {
                                 placeholder="Ask about FAR Part 15..."
                                 className="flex-1"
                                 disabled={isLoading || (!usageState.isLoading && !usageState.isAllowed)}
+                                aria-label="Ask a question about federal acquisition regulations"
                             />
-                            <Button type="submit" disabled={isLoading || !input.trim() || (!usageState.isLoading && !usageState.isAllowed)}>
+                            <Button
+                                type="submit"
+                                disabled={isLoading || !input.trim() || (!usageState.isLoading && !usageState.isAllowed)}
+                                aria-label="Send message"
+                            >
                                 <Send className="h-4 w-4" />
                             </Button>
                         </form>

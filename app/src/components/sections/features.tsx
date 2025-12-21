@@ -1,120 +1,118 @@
 "use client"
 
-import { 
-  SearchIcon,
-  DocumentIcon, 
-  DatabaseIcon,
-  ZapIcon
-} from "@/components/common/icons"
+import Image from "next/image"
+import { Badge } from "@/components/ui/badge"
+import {
+  ShieldCheckIcon,
+  ZapIcon,
+  NetworkIcon,
+  CheckIcon
+} from "lucide-react"
+import { NetworkVisualization } from "@/components/common/NetworkVisualization"
 
 export function Features() {
-  const features = [
-    {
-      icon: SearchIcon,
-      title: "Regulatory Intelligence",
-      description: "Ask complex questions like 'What are procurement integrity requirements for negotiations over $100K?' Get instant answers with exact FAR/DFARS citations and confidence scoring.",
-      benefits: ["Eliminate hours of regulatory research", "Exact citations for audit trails", "98.7% accuracy rate"],
-      metric: "85% time reduction"
-    },
-    {
-      icon: DocumentIcon,
-      title: "Compliance Automation", 
-      description: "Generate acquisition strategies, market research plans, and compliance checklists automatically based on your procurement requirements and agency procedures.",
-      benefits: ["Pre-action compliance checklists", "Source selection documentation", "J&A template generation"],
-      metric: "Zero drafting time"
-    },
-    {
-      icon: DatabaseIcon,
-      title: "Always-Current Regulatory Database",
-      description: "Our AI monitors Federal Register updates, FAR Council changes, and DFARS modifications. Your answers reflect the most current regulatory text automatically.",
-      benefits: ["24-hour Federal Register monitoring", "Automatic interim rule integration", "Version control with effective dates"],
-      metric: "100% current"
-    },
-    {
-      icon: ZapIcon,
-      title: "Federal Workflow Integration",
-      description: "Purpose-built for GS-1102 workflows with contract lifecycle management, acquisition planning support, and real-time collaboration features.",
-      benefits: ["Contract lifecycle guidance", "Acquisition planning templates", "Team collaboration tools"],
-      metric: "Sub-3s responses"
-    }
-  ]
-
   return (
-    <section id="features" className="py-24 bg-slate-50">
+    <section id="features" className="py-24 bg-white relative overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">
-            AI-Powered Solutions for Federal Acquisition Excellence
+          <h2 className="text-4xl font-bold text-slate-900 sm:text-5xl mb-6">
+            The Regulatory Graph
           </h2>
-          <p className="mt-4 text-lg text-slate-600">
-            Every feature designed specifically for GS-1102 contracting officers and federal procurement teams.
-            Built to accelerate your workflow while ensuring regulatory compliance.
+          <p className="text-xl text-slate-600">
+            A semantic intelligence engine connecting <span className="font-semibold text-federal-navy">25+ regulatory libraries</span> into a single source of truth.
           </p>
         </div>
 
-        {/* Features Grid */}
-        <div className="grid gap-8 md:grid-cols-2">
-          {features.map((feature, index) => (
-            <div 
-              key={index}
-              className="relative bg-white rounded-xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 border border-slate-200"
-            >
-              {/* Icon & Metric */}
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex items-center justify-center w-14 h-14 bg-federal-navy/10 rounded-lg">
-                  <feature.icon className="text-federal-navy" size={24} />
-                </div>
-                <div className="text-xs font-semibold text-federal-navy bg-slate-100 rounded-full px-3 py-1">
-                  {feature.metric}
-                </div>
+        {/* Bento Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
+
+          {/* Large Tile: Regulatory Graph */}
+          <div className="md:col-span-2 md:row-span-2 relative group overflow-hidden rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl">
+            <div className="absolute inset-0">
+              <NetworkVisualization />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-90"></div>
+            </div>
+
+            <div className="absolute bottom-0 left-0 p-8 w-full z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <Badge variant="outline" className="bg-blue-500/20 text-blue-300 border-blue-500/30">
+                  <NetworkIcon size={14} className="mr-1" /> Semantic Core
+                </Badge>
               </div>
-              
-              {/* Content */}
-              <h3 className="text-xl font-bold text-slate-900 mb-3">
-                {feature.title}
-              </h3>
-              <p className="text-slate-600 mb-6 leading-relaxed">
-                {feature.description}
+              <h3 className="text-3xl font-bold text-white mb-2">Unifying the Federal Ecosystem</h3>
+              <p className="text-slate-300 max-w-lg">
+                FARchat doesn&apos;t just read text. It maps the relationships between the FAR, DFARS, and 23 agency supplements (VAAR, GSAM, NMCARS) to understand the *hierarchy* of compliance.
               </p>
-              
-              {/* Benefits */}
-              <div className="space-y-2">
-                <h4 className="text-sm font-semibold text-slate-900 mb-3">Key Benefits:</h4>
-                {feature.benefits.map((benefit, benefitIndex) => (
-                  <div key={benefitIndex} className="flex items-start space-x-2">
-                    <svg className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    <span className="text-sm text-slate-600">{benefit}</span>
-                  </div>
-                ))}
+            </div>
+          </div>
+
+          {/* Tall Tile: Compliance Automation */}
+          <div className="md:col-span-1 md:row-span-2 relative group overflow-hidden rounded-3xl bg-slate-50 border border-slate-200 p-8 flex flex-col justify-between">
+            <div>
+              <div className="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center mb-6 text-green-600">
+                <ShieldCheckIcon size={24} />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-3">Compliance Autopilot</h3>
+              <p className="text-slate-600">
+                Generate J&As, Acquisition Plans, and Market Research Reports that automatically cite the correct agency-specific regulations.
+              </p>
+            </div>
+
+            {/* Abstract Visual Representation */}
+            <div className="mt-8 relative h-40 bg-white rounded-xl border border-slate-100 shadow-sm p-4 overflow-hidden">
+              <div className="space-y-3 opacity-50">
+                <div className="h-2 w-3/4 bg-slate-200 rounded animate-pulse"></div>
+                <div className="h-2 w-full bg-slate-200 rounded animate-pulse delay-75"></div>
+                <div className="h-2 w-5/6 bg-slate-200 rounded animate-pulse delay-150"></div>
+              </div>
+              {/* Active Checkmark overlay */}
+              <div className="absolute bottom-4 right-4 bg-green-500 text-white p-2 rounded-full shadow-lg transform translate-y-1 group-hover:translate-y-0 transition-transform">
+                <CheckIcon size={16} />
               </div>
             </div>
-          ))}
-        </div>
+          </div>
 
-        {/* Bottom CTA */}
-        <div className="text-center mt-16 p-8 bg-white rounded-xl border border-slate-200">
-          <h3 className="text-xl font-semibold text-slate-900 mb-2">
-            Ready to Transform Your Federal Procurement Process?
-          </h3>
-          <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
-            Join 500+ federal contracting professionals who are already experiencing 
-            the future of regulatory intelligence and compliance automation.
-          </p>
-          <a 
-            href="#access"
-            className="inline-flex items-center bg-government-blue text-white font-medium px-6 py-3 rounded-lg hover:bg-government-blue/90 transition-colors"
-          >
-            Secure Alpha Access
-            <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </a>
-        </div>
+          {/* Small Tile: Speed */}
+          <div className="md:col-span-1 relative group overflow-hidden rounded-3xl bg-white border border-slate-200 p-8 shadow-sm hover:shadow-md transition-shadow">
+            <div className="absolute top-0 right-0 p-4 opacity-10">
+              <ZapIcon size={120} />
+            </div>
+            <h3 className="text-4xl font-bold text-slate-900 mb-1">85%</h3>
+            <p className="text-sm font-semibold text-federal-navy uppercase tracking-wider mb-4">Time Reduction</p>
+            <p className="text-slate-600 text-sm">
+              Cut research time from hours to seconds.
+            </p>
+          </div>
 
+          {/* Small Tile: Accuracy */}
+          <div className="md:col-span-1 md:col-start-2 relative group overflow-hidden rounded-3xl bg-federal-navy text-white p-8 shadow-lg">
+            <div className="absolute inset-0 bg-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="relative z-10">
+              <h3 className="text-4xl font-bold mb-1">99.9%</h3>
+              <p className="text-sm font-semibold text-blue-200 uppercase tracking-wider mb-4">Citation Accuracy</p>
+              <p className="text-blue-100 text-sm">
+                Every answer links directly to the source text.
+              </p>
+            </div>
+          </div>
+
+          {/* Small Tile: Updates */}
+          <div className="md:col-span-1 relative group overflow-hidden rounded-3xl bg-white border border-slate-200 p-8 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+              </span>
+              <span className="text-xs font-bold text-green-600 uppercase tracking-wider">Live Updates</span>
+            </div>
+            <p className="text-slate-900 font-semibold">
+              Synced nightly with the Federal Register and Acquisition.gov.
+            </p>
+          </div>
+
+        </div>
       </div>
     </section>
   )

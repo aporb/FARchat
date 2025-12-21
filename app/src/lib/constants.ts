@@ -200,24 +200,26 @@ export const TRUST_INDICATORS = [
 
 export const ROUTES = {
   home: "/",
-  features: "/features",
-  pricing: "/pricing", 
+  features: "/#features",
+  pricing: "/#access",
   about: "/about",
-  contact: "/contact",
-  demo: "/demo",
+  contact: "mailto:hello@farchat.app",
+  demo: "/#demo",
   login: "/login",
-  signup: "/signup",
-  alpha: "/alpha"
+  signup: "/login",
+  alpha: "/alpha",
+  chat: "/chat",
+  search: "/search"
 } as const
 
 export const SOCIAL_LINKS = {
   twitter: "https://twitter.com/farchatapp",
-  linkedin: "https://linkedin.com/company/farchatapp", 
+  linkedin: "https://linkedin.com/company/farchatapp",
   github: "https://github.com/farchatapp"
 } as const
 
 export const LEGAL_LINKS = {
-  privacy: "/privacy",
-  terms: "/terms",
-  security: "/security"
+  privacy: "/legal/privacy",
+  terms: "/legal/terms",
+  security: "/#compliance"
 } as const

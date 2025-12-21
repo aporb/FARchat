@@ -74,13 +74,13 @@ export function Navigation() {
                 View Demo
               </Link>
             </Button>
-            <Button 
+            <Button
               size="sm"
-              className="bg-government-blue hover:bg-government-blue/90 text-white font-medium px-4"
+              className="bg-federal-navy hover:bg-federal-navy/90 text-white font-medium px-4"
               asChild
             >
               <Link href="#access">
-                Request Access
+                Get Started
               </Link>
             </Button>
           </div>
