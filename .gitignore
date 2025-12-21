@@ -37,3 +37,5 @@ next-env.d.ts
 
 # source content
 source_content/
+
+secrets.env
