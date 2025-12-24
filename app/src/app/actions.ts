@@ -133,3 +133,206 @@ export async function getUserUsage() {
 
     return await getUsageState(user.id)
 }
+
+// ============================================
+// CONVERSATION MANAGEMENT
+// ============================================
+
+export async function createConversation(title?: string): Promise<{ data?: any; error?: string }> {
+    const supabase = await createSupabaseServerClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        return { error: 'Unauthorized' }
+    }
+
+    const conversationTitle = title || 'New Conversation'
+
+    const { data, error } = await supabase
+        .from('conversations')
+        .insert({
+            user_id: user.id,
+            title: conversationTitle
+        })
+        .select()
+        .single()
+
+    if (error) {
+        return { error: error.message }
+    }
+
+    return { data }
+}
+
+export async function getConversations(): Promise<{ data?: any[]; error?: string }> {
+    const supabase = await createSupabaseServerClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        return { error: 'Unauthorized' }
+    }
+
+    const { data, error } = await supabase
+        .from('conversations')
+        .select('id, title, created_at, updated_at')
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false })
+
+    if (error) {
+        return { error: error.message }
+    }
+
+    return { data }
+}
+
+export async function getConversation(id: string): Promise<{ data?: any; error?: string }> {
+    const supabase = await createSupabaseServerClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        return { error: 'Unauthorized' }
+    }
+
+    const { data, error } = await supabase
+        .from('conversations')
+        .select('*')
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .single()
+
+    if (error) {
+        return { error: error.message }
+    }
+
+    return { data }
+}
+
+export async function getConversationMessages(conversationId: string): Promise<{ data?: any[]; error?: string }> {
+    const supabase = await createSupabaseServerClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        return { error: 'Unauthorized' }
+    }
+
+    const { data, error } = await supabase
+        .from('messages')
+        .select(`
+            *,
+            chat_sources (
+                id,
+                regulation,
+                section,
+                title,
+                similarity_score
+            )
+        `)
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true })
+
+    if (error) {
+        return { error: error.message }
+    }
+
+    return { data }
+}
+
+export async function saveMessage(
+    conversationId: string,
+    role: 'user' | 'assistant',
+    content: string,
+    sources?: Array<{
+        chunkId: number
+        regulation: string
+        section: string
+        title: string
+        similarityScore: number
+    }>
+): Promise<{ data?: any; error?: string }> {
+    const supabase = await createSupabaseServerClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        return { error: 'Unauthorized' }
+    }
+
+    // Insert the message
+    const { data: message, error: msgError } = await supabase
+        .from('messages')
+        .insert({
+            conversation_id: conversationId,
+            role,
+            content
+        })
+        .select()
+        .single()
+
+    if (msgError) {
+        return { error: msgError.message }
+    }
+
+    // Insert sources if provided
+    if (sources && sources.length > 0) {
+        const sourceData = sources.map(s => ({
+            message_id: message.id,
+            chunk_id: s.chunkId,
+            regulation: s.regulation,
+            section: s.section,
+            title: s.title,
+            similarity_score: s.similarityScore
+        }))
+
+        const { error: sourceError } = await supabase
+            .from('chat_sources')
+            .insert(sourceData)
+
+        if (sourceError) {
+            console.error('Error saving sources:', sourceError)
+            // Don't fail the whole operation if sources fail
+        }
+    }
+
+    return { data: message }
+}
+
+export async function deleteConversation(id: string): Promise<{ error?: string }> {
+    const supabase = await createSupabaseServerClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        return { error: 'Unauthorized' }
+    }
+
+    const { error } = await supabase
+        .from('conversations')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user.id)
+
+    if (error) {
+        return { error: error.message }
+    }
+
+    return {}
+}
+
+export async function updateConversationTitle(id: string, title: string): Promise<{ error?: string }> {
+    const supabase = await createSupabaseServerClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        return { error: 'Unauthorized' }
+    }
+
+    const { error } = await supabase
+        .from('conversations')
+        .update({ title })
+        .eq('id', id)
+        .eq('user_id', user.id)
+
+    if (error) {
+        return { error: error.message }
+    }
+
+    return {}
+}

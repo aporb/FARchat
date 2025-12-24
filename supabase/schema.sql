@@ -141,6 +141,109 @@ end;
 $$;
 
 -- ============================================
+-- CHAT PERSISTENCE TABLES
+-- Stores chat conversations and messages
+-- ============================================
+
+-- Conversations table
+create table public.conversations (
+    id uuid default gen_random_uuid() primary key,
+    user_id uuid references auth.users not null,
+    title text default 'New Conversation',
+    created_at timestamptz default now(),
+    updated_at timestamptz default now()
+);
+
+-- Enable RLS on conversations
+alter table public.conversations enable row level security;
+
+create policy "Users can view their own conversations"
+    on conversations for select
+    using ( auth.uid() = user_id );
+
+create policy "Users can create conversations"
+    on conversations for insert
+    with check ( auth.uid() = user_id );
+
+create policy "Users can update their own conversations"
+    on conversations for update
+    using ( auth.uid() = user_id );
+
+create policy "Users can delete their own conversations"
+    on conversations for delete
+    using ( auth.uid() = user_id );
+
+-- Messages table
+create table public.messages (
+    id uuid default gen_random_uuid() primary key,
+    conversation_id uuid references public.conversations on delete cascade not null,
+    role text not null check (role in ('user', 'assistant')),
+    content text not null,
+    token_count integer default 0,
+    created_at timestamptz default now()
+);
+
+-- Enable RLS on messages
+alter table public.messages enable row level security;
+
+create policy "Users can view messages in their conversations"
+    on messages for select
+    using (
+        exists (
+            select 1 from public.conversations
+            where id = messages.conversation_id
+            and user_id = auth.uid()
+        )
+    );
+
+create policy "Users can insert messages in their conversations"
+    on messages for insert
+    with check (
+        exists (
+            select 1 from public.conversations
+            where id = messages.conversation_id
+            and user_id = auth.uid()
+        )
+    );
+
+-- Chat sources/citations table
+create table public.chat_sources (
+    id uuid default gen_random_uuid() primary key,
+    message_id uuid references public.messages on delete cascade not null,
+    chunk_id bigint references public.document_chunks on delete set null,
+    regulation text,
+    section text,
+    title text,
+    similarity_score float,
+    created_at timestamptz default now()
+);
+
+-- Enable RLS on chat_sources
+alter table public.chat_sources enable row level security;
+
+create policy "Users can view sources in their conversations"
+    on chat_sources for select
+    using (
+        exists (
+            select 1 from public.messages
+            join public.conversations on conversations.id = messages.conversation_id
+            where messages.id = chat_sources.message_id
+            and conversations.user_id = auth.uid()
+        )
+    );
+
+create policy "Users can insert sources for their messages"
+    on chat_sources for insert
+    with check (
+        exists (
+            select 1 from public.messages
+            join public.conversations on conversations.id = messages.conversation_id
+            where messages.id = chat_sources.message_id
+            and conversations.user_id = auth.uid()
+        )
+    );
+
+-- ============================================
 -- HELPER FUNCTIONS
 -- ============================================
 
@@ -164,3 +267,18 @@ begin
   return new_count;
 end;
 $$;
+
+-- Function to update conversation timestamp
+create or replace function update_conversation_timestamp()
+returns trigger as $$
+begin
+    update public.conversations
+    set updated_at = now()
+    where id = new.conversation_id;
+    return new;
+end;
+$$ language plpgsql;
+
+create trigger on_message_created
+    after insert on public.messages
+    for each row execute procedure update_conversation_timestamp();

@@ -1,17 +1,38 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import { Send, Menu, Lock } from 'lucide-react'
+import { Send, Menu, Lock, Plus, Trash2, MessageSquare, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { RegulationExplorer } from '@/components/regulations/RegulationExplorer'
 import { MessageBubble } from './MessageBubble'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useUsageLimit } from '@/hooks/use-usage-limit'
+import {
+    createConversation,
+    getConversations,
+    getConversationMessages,
+    saveMessage,
+    deleteConversation
+} from '@/app/actions'
+import { formatDistanceToNow, cn } from '@/lib/utils'
 
 type Message = {
     role: 'user' | 'assistant'
     content: string
+    sources?: Array<{
+        id?: string
+        regulation: string
+        section: string
+        title: string
+        similarityScore?: number
+    }>
+}
+
+type Conversation = {
+    id: string
+    title: string
+    created_at: string
+    updated_at: string
 }
 
 export function ChatInterface() {
@@ -19,6 +40,9 @@ export function ChatInterface() {
     const [input, setInput] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [sidebarOpen, setSidebarOpen] = useState(true)
+    const [conversations, setConversations] = useState<Conversation[]>([])
+    const [currentConversation, setCurrentConversation] = useState<string | null>(null)
+    const [isLoadingConversations, setIsLoadingConversations] = useState(false)
     const scrollRef = useRef<HTMLDivElement>(null)
 
     // Usage Limit Hook
@@ -31,6 +55,65 @@ export function ChatInterface() {
         }
     }, [messages])
 
+    // Load conversations on mount
+    useEffect(() => {
+        loadConversations()
+    }, [])
+
+    const loadConversations = async () => {
+        setIsLoadingConversations(true)
+        const { data } = await getConversations()
+        if (data) {
+            setConversations(data)
+        }
+        setIsLoadingConversations(false)
+    }
+
+    const loadConversation = async (conversationId: string) => {
+        setIsLoading(true)
+        setCurrentConversation(conversationId)
+
+        const { data } = await getConversationMessages(conversationId)
+        if (data) {
+            const loadedMessages: Message[] = data.map((msg: any) => ({
+                role: msg.role as 'user' | 'assistant',
+                content: msg.content,
+                sources: msg.chat_sources?.map((s: any) => ({
+                    id: s.id,
+                    regulation: s.regulation,
+                    section: s.section,
+                    title: s.title,
+                    similarityScore: s.similarity_score
+                }))
+            }))
+            setMessages(loadedMessages)
+        }
+        setIsLoading(false)
+    }
+
+    const startNewConversation = async () => {
+        setIsLoading(true)
+        const { data } = await createConversation()
+        if (data) {
+            setCurrentConversation(data.id)
+            setConversations(prev => [data, ...prev])
+            setMessages([])
+        }
+        setIsLoading(false)
+    }
+
+    const handleDeleteConversation = async (e: React.MouseEvent, id: string) => {
+        e.stopPropagation()
+        const { error } = await deleteConversation(id)
+        if (!error) {
+            setConversations(prev => prev.filter(c => c.id !== id))
+            if (currentConversation === id) {
+                setCurrentConversation(null)
+                setMessages([])
+            }
+        }
+    }
+
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
         if (!input.trim() || isLoading) return
@@ -41,6 +124,21 @@ export function ChatInterface() {
 
         const userMessage = input.trim()
         setInput('')
+
+        // Create conversation if needed
+        let conversationId = currentConversation
+        if (!conversationId) {
+            const { data } = await createConversation(userMessage.slice(0, 50) + '...')
+            if (data) {
+                conversationId = data.id
+                setCurrentConversation(data.id)
+                setConversations(prev => [data, ...prev])
+            } else {
+                // Fallback: continue without persistence
+                conversationId = 'temp'
+            }
+        }
+
         const userMsg: Message = { role: 'user', content: userMessage }
         setMessages(prev => [...prev, userMsg])
         setIsLoading(true)
@@ -49,14 +147,16 @@ export function ChatInterface() {
         recordUsage()
 
         try {
+            // Get current messages for context
+            const currentMessages = messages.map(m => ({ role: m.role, content: m.content }))
+
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    messages: [...messages, { role: 'user', content: userMessage }].map(m => ({
-                        role: m.role,
-                        content: m.content
-                    }))
+                    messages: [...currentMessages, { role: 'user', content: userMessage }],
+                    conversationId,
+                    conversationTitle: userMessage.slice(0, 50)
                 })
             })
 
@@ -67,17 +167,30 @@ export function ChatInterface() {
             const reader = response.body?.getReader()
             if (!reader) return
 
-            // Add a placeholder for assistant message
-            const assistantMsg: Message = { role: 'assistant', content: '' }
+            // Add a placeholder for assistant message with empty sources
+            const assistantMsg: Message = { role: 'assistant', content: '', sources: [] }
             setMessages(prev => [...prev, assistantMsg])
 
             const decoder = new TextDecoder()
+            let fullContent = ''
+            let sources: any[] = []
+
+            // Parse sources from headers
+            const sourcesHeader = response.headers.get('X-Sources')
+            if (sourcesHeader) {
+                try {
+                    sources = JSON.parse(Buffer.from(sourcesHeader, 'base64').toString())
+                } catch (e) {
+                    console.error('Error parsing sources:', e)
+                }
+            }
 
             while (true) {
                 const { done, value } = await reader.read()
                 if (done) break
 
                 const text = decoder.decode(value, { stream: true })
+                fullContent += text
                 setMessages(prev => {
                     const newMessages = [...prev]
                     if (newMessages.length === 0) return newMessages
@@ -87,10 +200,23 @@ export function ChatInterface() {
 
                     if (lastMessage.role === 'assistant') {
                         lastMessage.content += text
+                        lastMessage.sources = sources
                         newMessages[lastMsgIndex] = lastMessage
                     }
                     return newMessages
                 })
+            }
+
+            // Save messages to database after streaming completes
+            if (conversationId && conversationId !== 'temp') {
+                await saveMessage(conversationId, 'user', userMessage)
+                await saveMessage(conversationId, 'assistant', fullContent, sources.map((s: any) => ({
+                    chunkId: s.chunkId,
+                    regulation: s.regulation,
+                    section: s.section,
+                    title: s.title,
+                    similarityScore: s.similarityScore
+                })))
             }
 
         } catch (error) {
@@ -104,13 +230,66 @@ export function ChatInterface() {
 
     return (
         <div className="flex h-screen w-full overflow-hidden bg-background">
-            {/* Sidebar - Desktop */}
+            {/* Sidebar - Conversation List */}
             <motion.div
-                initial={{ width: 320, opacity: 1 }}
-                animate={{ width: sidebarOpen ? 320 : 0, opacity: sidebarOpen ? 1 : 0 }}
+                initial={{ width: 280, opacity: 1 }}
+                animate={{ width: sidebarOpen ? 280 : 0, opacity: sidebarOpen ? 1 : 0 }}
                 className="hidden md:flex flex-col border-r border-border bg-sidebar overflow-hidden"
             >
-                <RegulationExplorer />
+                <div className="p-4 border-b border-border">
+                    <Button
+                        onClick={startNewConversation}
+                        className="w-full gap-2"
+                        variant="outline"
+                    >
+                        <Plus className="w-4 h-4" />
+                        New Chat
+                    </Button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-2">
+                    {isLoadingConversations ? (
+                        <div className="flex items-center justify-center py-8">
+                            <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                        </div>
+                    ) : conversations.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-8 text-center px-4">
+                            <MessageSquare className="w-8 h-8 text-muted-foreground mb-2" />
+                            <p className="text-sm text-muted-foreground">
+                                No conversations yet. Start a new chat to get started.
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="space-y-1">
+                            {conversations.map((conv) => (
+                                <div
+                                    key={conv.id}
+                                    onClick={() => loadConversation(conv.id)}
+                                    className={cn(
+                                        "group flex items-center gap-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors",
+                                        currentConversation === conv.id
+                                            ? "bg-primary/10 text-primary"
+                                            : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                                    )}
+                                >
+                                    <MessageSquare className="w-4 h-4 shrink-0" />
+                                    <span className="flex-1 truncate">{conv.title}</span>
+                                    <span className="text-[10px] opacity-50 shrink-0">
+                                        {formatDistanceToNow(new Date(conv.updated_at))}
+                                    </span>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        onClick={(e) => handleDeleteConversation(e, conv.id)}
+                                    >
+                                        <Trash2 className="w-3 h-3" />
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </motion.div>
 
             {/* Main Chat Area */}
@@ -122,20 +301,28 @@ export function ChatInterface() {
                             variant="ghost"
                             size="icon"
                             onClick={() => setSidebarOpen(!sidebarOpen)}
-                            className="md:flex hidden"
-                            aria-label={sidebarOpen ? "Close regulation explorer sidebar" : "Open regulation explorer sidebar"}
+                            className={cn(!sidebarOpen && "md:flex hidden")}
+                            aria-label={sidebarOpen ? "Close conversation sidebar" : "Open conversation sidebar"}
                             aria-expanded={sidebarOpen}
                         >
                             <Menu className="h-5 w-5" />
                         </Button>
-                        <h1 className="font-semibold text-lg tracking-tight">FARchat <span className="text-primary text-xs ml-1 uppercase bg-primary/10 px-1.5 py-0.5 rounded">Beta</span></h1>
+                        {currentConversation && (
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                <ChevronRight className="w-4 h-4" />
+                                <span className="truncate max-w-[200px]">
+                                    {conversations.find(c => c.id === currentConversation)?.title}
+                                </span>
+                            </div>
+                        )}
+                        <h1 className="font-semibold text-lg tracking-tight hidden sm:block">FARchat <span className="text-primary text-xs ml-1 uppercase bg-primary/10 px-1.5 py-0.5 rounded">Beta</span></h1>
                     </div>
                 </header>
 
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-4 md:p-6" ref={scrollRef}>
                     <div className="max-w-3xl mx-auto space-y-4 pb-4">
-                        {messages.length === 0 && (
+                        {messages.length === 0 && !isLoading && (
                             <div className="flex flex-col items-center justify-center h-[60vh] text-center space-y-4">
                                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                                     <span className="text-3xl">🦅</span>
@@ -147,9 +334,16 @@ export function ChatInterface() {
                             </div>
                         )}
 
-                        {messages.map((m, i) => (
-                            <MessageBubble key={i} role={m.role} content={m.content} />
-                        ))}
+                        <AnimatePresence initial={false}>
+                            {messages.map((m, i) => (
+                                <MessageBubble
+                                    key={i}
+                                    role={m.role}
+                                    content={m.content}
+                                    sources={m.sources}
+                                />
+                            ))}
+                        </AnimatePresence>
 
                         {isLoading && messages[messages.length - 1]?.role === 'user' && (
                             <div className="flex justify-start w-full">

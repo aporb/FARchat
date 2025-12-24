@@ -42,9 +42,19 @@ export async function POST(req: Request) {
             console.error('Vector Search Error:', searchError)
         }
 
+        // Build context with source information
         const context = documents?.length
-            ? documents.map((d: any) => `[Source: ${d.metadata?.regulation} ${d.metadata?.section || ''} ${d.metadata?.title || ''}]\n${d.content}`).join("\n\n---\n\n")
+            ? documents.map((d: any) => `[Source: ${d.metadata?.regulation || 'FAR'} ${d.metadata?.section || ''} ${d.metadata?.title || ''}]\n${d.content}`).join("\n\n---\n\n")
             : "No specific regulatory context found for this query."
+
+        // Extract source metadata for citations
+        const sources = documents?.map((d: any) => ({
+            chunkId: d.id,
+            regulation: d.metadata?.regulation || 'FAR',
+            section: d.metadata?.section || '',
+            title: d.metadata?.title || '',
+            similarityScore: d.similarity
+        })) || []
 
         // 3. Provider Selection
         const useDeepSeekDirect = !!process.env.DEEPSEEK_API_KEY
@@ -71,11 +81,11 @@ export async function POST(req: Request) {
             messages: [
                 {
                     role: 'system',
-                    content: `You are FARchat, a professional federal contracting assistant. 
-                              Use the provided context to answer questions accurately. 
-                              ALWAYS cite your sources using the exact format: [FAR 1.101]. 
+                    content: `You are FARchat, a professional federal contracting assistant.
+                              Use the provided context to answer questions accurately.
+                              ALWAYS cite your sources using the exact format: [FAR 1.101] or [DFARS 252.234-7001].
                               If the answer is not in the context, say you don't know based on the provided regulations.
-                              
+
                               Context:
                               ${context}`
                 },
@@ -85,17 +95,26 @@ export async function POST(req: Request) {
         })
 
         // Convert OpenAI stream to a Web Stream for Next.js response
-        const stream = new ReadableStream({
+        const encoder = new TextEncoder()
+
+        const readableStream = new ReadableStream({
             async start(controller) {
                 for await (const chunk of response) {
                     const content = chunk.choices[0]?.delta?.content || ""
-                    controller.enqueue(new TextEncoder().encode(content))
+                    controller.enqueue(encoder.encode(content))
                 }
                 controller.close()
             },
         })
 
-        return new Response(stream)
+        // Return both the stream and sources
+        return new Response(readableStream, {
+            headers: {
+                'Content-Type': 'text/plain; charset=utf-8',
+                'X-Sources-Count': String(sources.length),
+                'X-Sources': Buffer.from(JSON.stringify(sources)).toString('base64')
+            }
+        })
 
     } catch (error: any) {
         console.error('Chat API Error:', error)
