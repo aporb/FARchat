@@ -39,3 +39,7 @@ next-env.d.ts
 source_content/
 
 secrets.env
+
+# Supabase local development artifacts
+supabase/supabase/.temp/
+supabase/supabase/supabase/
