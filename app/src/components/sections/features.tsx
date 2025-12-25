@@ -1,5 +1,6 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -8,7 +9,19 @@ import {
   NetworkIcon,
   CheckIcon
 } from "lucide-react"
-import { NetworkVisualization } from "@/components/common/NetworkVisualization"
+
+// Dynamic import for heavy SVG animation component - only loads when visible
+const NetworkVisualization = dynamic(
+  () => import("@/components/common/NetworkVisualization").then(mod => ({ default: mod.NetworkVisualization })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full bg-slate-800 animate-pulse flex items-center justify-center">
+        <div className="w-16 h-16 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+      </div>
+    )
+  }
+)
 
 export function Features() {
   return (

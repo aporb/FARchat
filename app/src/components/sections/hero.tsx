@@ -18,9 +18,10 @@ export function Hero() {
                     alt="Network background visualization showing federal regulatory connections"
                     fill
                     priority
-                    quality={85}
+                    quality={75}
                     placeholder="blur"
                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8A0XqoKoPtKdVFjvTyX3N6rXbRau8K0r7Vbcv+TBVsYi9VAAAAAElFTkSuQmCC"
+                    sizes="100vw"
                     className="object-cover"
                     style={{
                         objectPosition: 'center',
@@ -125,21 +126,11 @@ export function Hero() {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-32">
                 <motion.div
                     className="relative max-w-6xl mx-auto"
-                    initial={{ opacity: 0, rotateX: 20, y: 100 }}
-                    animate={{
-                        opacity: 1,
-                        rotateX: 8,
-                        y: [0, -8, 0],
-                    }}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{
-                        opacity: { duration: 1, delay: 0.3 },
-                        rotateX: { duration: 1, delay: 0.3 },
-                        y: {
-                            duration: 4,
-                            delay: 1.3,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                        }
+                        opacity: { duration: 0.8, delay: 0.5 },
+                        y: { duration: 0.8, delay: 0.5, ease: "easeOut" }
                     }}
                     style={{ transformStyle: "preserve-3d", perspective: "1000px" }}
                 >
