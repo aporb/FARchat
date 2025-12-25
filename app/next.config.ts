@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   // Enable React strict mode for better development experience
@@ -50,4 +51,19 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
 };
 
-export default nextConfig;
+// Wrap the Next.js config with Sentry
+// See: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+export default withSentryConfig(nextConfig, {
+  // Suppresses source map uploading logs during build
+  silent: true,
+
+  // Tunnel Sentry requests to avoid ad-blockers (optional)
+  tunnelRoute: "/monitoring",
+
+  // Webpack tree-shaking settings
+  bundleSizeOptimizations: {
+    excludeDebugStatements: true,
+    excludeReplayIframe: true,
+    excludeReplayShadowDom: true,
+  },
+});

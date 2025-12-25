@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next"
 import { Inter, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
+import { Toaster } from "@/components/ui/sonner"
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -57,7 +59,10 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        {children}
+        <TooltipProvider delayDuration={300}>
+          {children}
+        </TooltipProvider>
+        <Toaster position="bottom-right" richColors closeButton />
       </body>
     </html>
   )
