@@ -282,3 +282,40 @@ $$ language plpgsql;
 create trigger on_message_created
     after insert on public.messages
     for each row execute procedure update_conversation_timestamp();
+
+-- ============================================
+-- PERFORMANCE INDEXES
+-- Foreign key indexes for JOIN optimization
+-- ============================================
+
+-- Index on user_usage.user_id for user lookups
+create index if not exists idx_user_usage_user_id
+  on public.user_usage(user_id);
+
+-- Index on conversations.user_id for user's conversation list
+create index if not exists idx_conversations_user_id
+  on public.conversations(user_id);
+
+-- Index on messages.conversation_id for message retrieval
+create index if not exists idx_messages_conversation_id
+  on public.messages(conversation_id);
+
+-- Index on chat_sources.message_id for source lookups
+create index if not exists idx_chat_sources_message_id
+  on public.chat_sources(message_id);
+
+-- Index on chat_sources.chunk_id for document chunk references
+create index if not exists idx_chat_sources_chunk_id
+  on public.chat_sources(chunk_id);
+
+-- Composite index for fetching user's conversations sorted by recent activity
+create index if not exists idx_conversations_user_updated
+  on public.conversations(user_id, updated_at desc);
+
+-- Index for user_usage date-based lookups (rate limiting checks)
+create index if not exists idx_user_usage_date
+  on public.user_usage(date);
+
+-- Index for user_usage composite lookup (user + date for daily limits)
+create index if not exists idx_user_usage_user_date
+  on public.user_usage(user_id, date);
