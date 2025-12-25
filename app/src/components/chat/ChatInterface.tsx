@@ -5,8 +5,24 @@ import { Send, Menu, Lock, Plus, Trash2, MessageSquare, ChevronRight } from 'luc
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { MessageBubble } from './MessageBubble'
+import { ThinkingIndicator } from './ThinkingIndicator'
+import { EmptyState } from './EmptyState'
+import { SuggestionChips, defaultSuggestions, Suggestion } from './SuggestionChips'
+import { UserMenu } from '@/components/user'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useUsageLimit } from '@/hooks/use-usage-limit'
+import { toast } from 'sonner'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import {
     createConversation,
     getConversations,
@@ -17,8 +33,10 @@ import {
 import { formatDistanceToNow, cn } from '@/lib/utils'
 
 type Message = {
+    id?: string
     role: 'user' | 'assistant'
     content: string
+    isStreaming?: boolean
     sources?: Array<{
         id?: string
         regulation: string
@@ -43,6 +61,8 @@ export function ChatInterface() {
     const [conversations, setConversations] = useState<Conversation[]>([])
     const [currentConversation, setCurrentConversation] = useState<string | null>(null)
     const [isLoadingConversations, setIsLoadingConversations] = useState(false)
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    const [conversationToDelete, setConversationToDelete] = useState<Conversation | null>(null)
     const scrollRef = useRef<HTMLDivElement>(null)
 
     // Usage Limit Hook
@@ -102,16 +122,43 @@ export function ChatInterface() {
         setIsLoading(false)
     }
 
-    const handleDeleteConversation = async (e: React.MouseEvent, id: string) => {
+    const openDeleteDialog = (e: React.MouseEvent, conversation: Conversation) => {
         e.stopPropagation()
+        setConversationToDelete(conversation)
+        setDeleteDialogOpen(true)
+    }
+
+    const handleDeleteConversation = async () => {
+        if (!conversationToDelete) return
+
+        const id = conversationToDelete.id
         const { error } = await deleteConversation(id)
+
         if (!error) {
             setConversations(prev => prev.filter(c => c.id !== id))
             if (currentConversation === id) {
                 setCurrentConversation(null)
                 setMessages([])
             }
+            toast.success('Conversation deleted')
+        } else {
+            toast.error('Failed to delete conversation')
         }
+
+        setDeleteDialogOpen(false)
+        setConversationToDelete(null)
+    }
+
+    const handleSuggestionClick = (text: string) => {
+        setInput(text)
+        // Auto-submit the suggestion
+        const fakeEvent = { preventDefault: () => {} } as React.FormEvent
+        setTimeout(() => {
+            const form = document.querySelector('form')
+            if (form) {
+                form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+            }
+        }, 100)
     }
 
     async function handleSubmit(e: React.FormEvent) {
@@ -168,7 +215,7 @@ export function ChatInterface() {
             if (!reader) return
 
             // Add a placeholder for assistant message with empty sources
-            const assistantMsg: Message = { role: 'assistant', content: '', sources: [] }
+            const assistantMsg: Message = { role: 'assistant', content: '', sources: [], isStreaming: true }
             setMessages(prev => [...prev, assistantMsg])
 
             const decoder = new TextDecoder()
@@ -207,6 +254,16 @@ export function ChatInterface() {
                 })
             }
 
+            // Mark streaming as complete
+            setMessages(prev => {
+                const newMessages = [...prev]
+                const lastMsgIndex = newMessages.length - 1
+                if (newMessages[lastMsgIndex]?.role === 'assistant') {
+                    newMessages[lastMsgIndex] = { ...newMessages[lastMsgIndex], isStreaming: false }
+                }
+                return newMessages
+            })
+
             // Save messages to database after streaming completes
             if (conversationId && conversationId !== 'temp') {
                 await saveMessage(conversationId, 'user', userMessage)
@@ -237,14 +294,20 @@ export function ChatInterface() {
                 className="hidden md:flex flex-col border-r border-border bg-sidebar overflow-hidden"
             >
                 <div className="p-4 border-b border-border">
-                    <Button
-                        onClick={startNewConversation}
-                        className="w-full gap-2"
-                        variant="outline"
-                    >
-                        <Plus className="w-4 h-4" />
-                        New Chat
-                    </Button>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                onClick={startNewConversation}
+                                className="w-full gap-2"
+                                variant="outline"
+                                aria-label="Start a new conversation"
+                            >
+                                <Plus className="w-4 h-4" />
+                                New Chat
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">Start new conversation</TooltipContent>
+                    </Tooltip>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-2">
@@ -277,14 +340,20 @@ export function ChatInterface() {
                                     <span className="text-[10px] opacity-50 shrink-0">
                                         {formatDistanceToNow(new Date(conv.updated_at))}
                                     </span>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                                        onClick={(e) => handleDeleteConversation(e, conv.id)}
-                                    >
-                                        <Trash2 className="w-3 h-3" />
-                                    </Button>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                onClick={(e) => openDeleteDialog(e, conv)}
+                                                aria-label={`Delete conversation: ${conv.title}`}
+                                            >
+                                                <Trash2 className="w-3 h-3" />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="right">Delete</TooltipContent>
+                                    </Tooltip>
                                 </div>
                             ))}
                         </div>
@@ -297,16 +366,23 @@ export function ChatInterface() {
                 {/* Header / Top Bar */}
                 <header className="h-14 flex items-center px-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 sticky top-0 justify-between">
                     <div className="flex items-center gap-2">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setSidebarOpen(!sidebarOpen)}
-                            className={cn(!sidebarOpen && "md:flex hidden")}
-                            aria-label={sidebarOpen ? "Close conversation sidebar" : "Open conversation sidebar"}
-                            aria-expanded={sidebarOpen}
-                        >
-                            <Menu className="h-5 w-5" />
-                        </Button>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                                    className={cn(!sidebarOpen && "md:flex hidden")}
+                                    aria-label={sidebarOpen ? "Close conversation sidebar" : "Open conversation sidebar"}
+                                    aria-expanded={sidebarOpen}
+                                >
+                                    <Menu className="h-5 w-5" />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="bottom">
+                                {sidebarOpen ? "Hide sidebar" : "Show sidebar"}
+                            </TooltipContent>
+                        </Tooltip>
                         {currentConversation && (
                             <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                 <ChevronRight className="w-4 h-4" />
@@ -317,43 +393,47 @@ export function ChatInterface() {
                         )}
                         <h1 className="font-semibold text-lg tracking-tight hidden sm:block">FARchat <span className="text-primary text-xs ml-1 uppercase bg-primary/10 px-1.5 py-0.5 rounded">Beta</span></h1>
                     </div>
+                    <UserMenu />
                 </header>
 
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-4 md:p-6" ref={scrollRef}>
                     <div className="max-w-3xl mx-auto space-y-4 pb-4">
                         {messages.length === 0 && !isLoading && (
-                            <div className="flex flex-col items-center justify-center h-[60vh] text-center space-y-4">
-                                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                                    <span className="text-3xl">🦅</span>
-                                </div>
-                                <h2 className="text-2xl font-bold tracking-tight">How can I help with the FAR today?</h2>
-                                <p className="text-muted-foreground max-w-md">
-                                    Ask questions about Federal Acquisition Regulations, compliance, or contract clauses.
-                                </p>
-                            </div>
+                            <EmptyState
+                                onSuggestionClick={handleSuggestionClick}
+                                className="min-h-[60vh]"
+                            />
                         )}
 
                         <AnimatePresence initial={false}>
                             {messages.map((m, i) => (
                                 <MessageBubble
-                                    key={i}
+                                    key={m.id || i}
                                     role={m.role}
                                     content={m.content}
                                     sources={m.sources}
+                                    messageId={m.id}
+                                    isStreaming={m.isStreaming}
                                 />
                             ))}
                         </AnimatePresence>
 
-                        {isLoading && messages[messages.length - 1]?.role === 'user' && (
-                            <div className="flex justify-start w-full">
-                                <div className="bg-card border p-4 rounded-lg shadow-sm flex items-center gap-2">
-                                    <span className="w-2 h-2 bg-primary rounded-full animate-bounce" />
-                                    <span className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:0.2s]" />
-                                    <span className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:0.4s]" />
-                                </div>
-                            </div>
-                        )}
+                        {/* Enhanced Thinking Indicator */}
+                        <ThinkingIndicator
+                            isVisible={isLoading && messages[messages.length - 1]?.role === 'user'}
+                        />
+
+                        {/* Follow-up suggestions after assistant response */}
+                        {messages.length > 0 &&
+                            messages[messages.length - 1]?.role === 'assistant' &&
+                            !isLoading && (
+                                <SuggestionChips
+                                    suggestions={defaultSuggestions.slice(0, 3)}
+                                    onSelect={handleSuggestionClick}
+                                    disabled={isLoading}
+                                />
+                            )}
                     </div>
                 </div>
 
@@ -387,13 +467,18 @@ export function ChatInterface() {
                                 disabled={isLoading || (!usageState.isLoading && !usageState.isAllowed)}
                                 aria-label="Ask a question about federal acquisition regulations"
                             />
-                            <Button
-                                type="submit"
-                                disabled={isLoading || !input.trim() || (!usageState.isLoading && !usageState.isAllowed)}
-                                aria-label="Send message"
-                            >
-                                <Send className="h-4 w-4" />
-                            </Button>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        type="submit"
+                                        disabled={isLoading || !input.trim() || (!usageState.isLoading && !usageState.isAllowed)}
+                                        aria-label="Send message"
+                                    >
+                                        <Send className="h-4 w-4" />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent side="top">Send message</TooltipContent>
+                            </Tooltip>
                         </form>
                         <div className="text-center mt-2 flex justify-between items-center text-xs text-muted-foreground px-1">
                             <span>FARchat Beta</span>
@@ -404,6 +489,28 @@ export function ChatInterface() {
                     </div>
                 </div>
             </div>
+
+            {/* Delete Confirmation Dialog */}
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Conversation</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to delete &quot;{conversationToDelete?.title}&quot;?
+                            This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleDeleteConversation}
+                            className="bg-destructive text-white hover:bg-destructive/90"
+                        >
+                            Delete
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }

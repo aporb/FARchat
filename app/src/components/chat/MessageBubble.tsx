@@ -5,67 +5,19 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { Bot, User, ExternalLink, BookOpen } from 'lucide-react'
-
-interface Source {
-    id?: string
-    regulation: string
-    section: string
-    title: string
-    similarityScore?: number
-}
+import { Bot, User } from 'lucide-react'
+import { CitationList, Citation } from './CitationCard'
+import { MessageActions } from './MessageActions'
 
 interface MessageBubbleProps {
     role: 'user' | 'assistant'
     content: string
-    sources?: Source[] | undefined
+    sources?: Citation[] | undefined
+    messageId?: string | undefined
+    isStreaming?: boolean | undefined
 }
 
-export function MessageBubble({ role, content, sources }: MessageBubbleProps) {
-    // Render sources section
-    const renderSources = () => {
-        if (!sources || sources.length === 0) return null
-
-        return (
-            <div className="mt-3 pt-3 border-t border-border/50">
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
-                    <BookOpen className="w-3.5 h-3.5" />
-                    <span className="font-medium">Sources</span>
-                </div>
-                <div className="space-y-1.5">
-                    {sources.map((source, idx) => (
-                        <div
-                            key={source.id || idx}
-                            className="flex items-start gap-2 p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors text-xs"
-                        >
-                            <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-primary/10 text-primary font-medium text-[10px] shrink-0">
-                                {idx + 1}
-                            </span>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-1.5">
-                                    <span className="font-semibold text-foreground">
-                                        {source.regulation} {source.section}
-                                    </span>
-                                    {source.similarityScore && (
-                                        <span className="text-[10px] px-1 py-0.5 rounded bg-green-500/10 text-green-600 dark:text-green-400">
-                                            {Math.round(source.similarityScore * 100)}% match
-                                        </span>
-                                    )}
-                                </div>
-                                {source.title && (
-                                    <p className="text-muted-foreground truncate mt-0.5">
-                                        {source.title}
-                                    </p>
-                                )}
-                            </div>
-                            <ExternalLink className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
-                        </div>
-                    ))}
-                </div>
-            </div>
-        )
-    }
-
+export function MessageBubble({ role, content, sources, messageId, isStreaming }: MessageBubbleProps) {
     return (
         <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -126,7 +78,18 @@ export function MessageBubble({ role, content, sources }: MessageBubbleProps) {
                     )}
 
                     {/* Sources Section */}
-                    {role === 'assistant' && renderSources()}
+                    {role === 'assistant' && sources && sources.length > 0 && (
+                        <CitationList citations={sources} />
+                    )}
+
+                    {/* Message Actions - only show when not streaming */}
+                    {role === 'assistant' && content && !isStreaming && (
+                        <MessageActions
+                            content={content}
+                            messageId={messageId}
+                            variant="default"
+                        />
+                    )}
                 </div>
             </div>
         </motion.div>
