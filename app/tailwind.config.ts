@@ -32,6 +32,15 @@ export default {
           800: "#101623",
           900: "#0d111d",
         },
+        // Accent colors for CTAs and status
+        "accent-blue": {
+            DEFAULT: "hsl(var(--accent-blue))",
+            foreground: "hsl(0 0% 100%)",
+        },
+        "accent-amber": {
+            DEFAULT: "hsl(var(--accent-amber))",
+            foreground: "hsl(0 0% 100%)",
+        },
         "professional-blue": {
           DEFAULT: "#2E5266",
           50: "#f3f6f8",

@@ -48,7 +48,7 @@ export function GetStarted() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <Button
               size="lg"
-              className="px-8 py-6 text-lg font-semibold shadow-lg shadow-primary/20 transition-all hover:scale-105"
+              className="px-8 py-6 text-lg font-semibold hover-elevate shadow-lg shadow-primary/20"
               asChild
             >
               <Link href="/login">

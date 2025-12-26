@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { toast } from 'sonner'
+import { getCitationUrl, isKnownRegulation } from '@/lib/citations'
 
 export interface Citation {
     id?: string
@@ -152,15 +153,22 @@ export function CitationCard({ citation, index, className }: CitationCardProps) 
                                             className="h-7 text-xs gap-1.5"
                                             asChild
                                         >
-                                            <a
-                                                href={`https://www.acquisition.gov/far/${citation.section.toLowerCase().replace(/\s+/g, '-')}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                onClick={(e) => e.stopPropagation()}
-                                            >
-                                                <ExternalLink className="w-3 h-3" />
-                                                View Source
-                                            </a>
+                                            {(() => {
+                                                const url = getCitationUrl(citation.regulation, citation.section)
+                                                if (!url) return null
+
+                                                return (
+                                                    <a
+                                                        href={url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <ExternalLink className="w-3 h-3" />
+                                                        View Source
+                                                    </a>
+                                                )
+                                            })()}
                                         </Button>
                                     </TooltipTrigger>
                                     <TooltipContent>Open in acquisition.gov</TooltipContent>

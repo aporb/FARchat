@@ -246,6 +246,23 @@
    ROOT - Modern Minimal Blue Theme (Light Mode)
    ============================================ */
 :root {
+  /* === BRAND COLORS === */
+  /* Federal Navy - Primary Brand Color */
+  --federal-navy: 216 37% 17%;           /* #1B263B */
+  --federal-navy-light: 216 37% 25%;     /* Hover state */
+  --federal-navy-dark: 216 37% 12%;      /* Active state */
+  --federal-navy-foreground: 0 0% 100%;  /* White text on navy */
+
+  /* Accent Colors */
+  --accent-blue: 217 91% 60%;            /* #3B82F6 - Secondary actions */
+  --accent-amber: 38 92% 50%;            /* #F59E0B - Upgrade/Premium CTAs */
+
+  /* Status Colors - Accessible contrasts */
+  --success: 142 76% 36%;
+  --warning: 38 92% 50%;
+  --error: 0 84% 60%;
+  --info: 217 91% 60%;
+
   /* Core colors */
   --background: oklch(1.0000 0 0);
   --foreground: oklch(0.3211 0 0);
@@ -332,6 +349,12 @@
    DARK MODE - Modern Minimal Blue Theme
    ============================================ */
 .dark {
+  /* === BRAND COLORS (Dark Mode) === */
+  --federal-navy: 216 37% 85%;           /* Inverted for dark */
+  --federal-navy-light: 216 37% 90%;
+  --federal-navy-dark: 216 37% 80%;
+  --federal-navy-foreground: 216 37% 17%;
+
   /* Core colors */
   --background: oklch(0.2046 0 0);
   --foreground: oklch(0.9219 0 0);
@@ -409,4 +432,61 @@
   /* Accessibility - Focus ring */
   --focus-ring: 2px solid oklch(0.6231 0.1880 259.8145);
   --focus-ring-offset: 2px;
+}
+
+/* ============================================
+   SAFE AREA - iOS/Android Device Support
+   ============================================ */
+@layer utilities {
+    .safe-area-bottom {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .safe-area-top {
+        padding-top: env(safe-area-inset-top, 0px);
+    }
+
+    /* For Android navigation bar support */
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+        .safe-area-bottom {
+            padding-bottom: max(env(safe-area-inset-bottom), 16px);
+        }
+    }
+}
+
+/* ============================================
+   2026 DESIGN PATTERNS
+   ============================================ */
+
+/* Restrained Glassmorphism - Use sparingly */
+@layer components {
+    .glass-card {
+        @apply bg-white/80 dark:bg-slate-900/80;
+        @apply backdrop-blur-md;
+        @apply border border-slate-200/50 dark:border-slate-700/50;
+        @apply shadow-lg shadow-black/5;
+    }
+
+    .glass-header {
+        @apply bg-background/95 backdrop-blur-sm;
+        @apply border-b border-border/50;
+    }
+}
+
+/* Elevation-based hover states (replacing scale) */
+@layer utilities {
+    .hover-elevate {
+        @apply transition-all duration-200;
+        @apply hover:shadow-lg hover:-translate-y-0.5;
+    }
+
+    .hover-elevate-subtle {
+        @apply transition-shadow duration-200;
+        @apply hover:shadow-md;
+    }
+
+    /* Remove scale hovers - these are dated */
+    .no-scale-hover {
+        @apply hover:scale-100 !important;
+    }
 }

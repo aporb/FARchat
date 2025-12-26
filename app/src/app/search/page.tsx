@@ -41,7 +41,10 @@ export default function SearchPage() {
         <div className="min-h-screen bg-background flex flex-col">
             <header className="border-b border-border bg-card p-4 flex items-center justify-between sticky top-0 z-10">
                 <div className="flex items-center gap-2 font-semibold tracking-tight text-lg">
-                    <span className="text-3xl">🦅</span> FARchat Search
+                    <div className="w-8 h-8 rounded-lg bg-federal-navy flex items-center justify-center">
+                        <span className="text-white font-bold text-sm">F</span>
+                    </div>
+                    <span className="ml-2">FARchat Search</span>
                 </div>
                 <Button variant="ghost" onClick={() => router.push('/chat')}>
                     Go to Chat <ArrowRight className="ml-2 h-4 w-4" />

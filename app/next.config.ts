@@ -7,7 +7,9 @@ const nextConfig: NextConfig = {
 
   // Optimize images
   images: {
-    formats: ['image/webp', 'image/avif'],
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
 
   // SWC minification is enabled by default in Next.js 15
@@ -15,6 +17,7 @@ const nextConfig: NextConfig = {
   // Enable experimental features for better performance
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-slot'],
+    optimizeCss: true,
   },
 
   // Security headers for government compliance

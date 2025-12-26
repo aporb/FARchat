@@ -14,6 +14,14 @@ import { useUsageLimit } from '@/hooks/use-usage-limit'
 import { toast } from 'sonner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import {
+    Sheet,
+    SheetContent,
+    SheetTrigger,
+} from '@/components/ui/sheet'
+import { MobileConversationList } from './MobileConversationList'
+import { MobileBottomNav } from './MobileBottomNav'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
+import {
     AlertDialog,
     AlertDialogAction,
     AlertDialogCancel,
@@ -58,6 +66,7 @@ export function ChatInterface() {
     const [input, setInput] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [sidebarOpen, setSidebarOpen] = useState(true)
+    const [mobileSheetOpen, setMobileSheetOpen] = useState(false)
     const [conversations, setConversations] = useState<Conversation[]>([])
     const [currentConversation, setCurrentConversation] = useState<string | null>(null)
     const [isLoadingConversations, setIsLoadingConversations] = useState(false)
@@ -287,7 +296,7 @@ export function ChatInterface() {
 
     return (
         <div className="flex h-screen w-full overflow-hidden bg-background">
-            {/* Sidebar - Conversation List */}
+            {/* Desktop Sidebar - Hidden on mobile */}
             <motion.div
                 initial={{ width: 280, opacity: 1 }}
                 animate={{ width: sidebarOpen ? 280 : 0, opacity: sidebarOpen ? 1 : 0 }}
@@ -363,8 +372,56 @@ export function ChatInterface() {
 
             {/* Main Chat Area */}
             <div className="flex-1 flex flex-col h-full relative">
-                {/* Header / Top Bar */}
-                <header className="h-14 flex items-center px-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 sticky top-0 justify-between">
+                {/* Mobile Header - Only visible on mobile */}
+                <header className="h-12 flex items-center justify-between px-3 glass-header md:hidden sticky top-0 z-40">
+                    {/* Left: Menu trigger for mobile sheet */}
+                    <Sheet open={mobileSheetOpen} onOpenChange={setMobileSheetOpen}>
+                        <SheetTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="min-w-[44px] min-h-[44px]"
+                                aria-label="Open conversations"
+                            >
+                                <Menu className="h-5 w-5" />
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="left" className="w-[85vw] max-w-[320px] p-0">
+                            <MobileConversationList
+                                conversations={conversations}
+                                currentConversation={currentConversation}
+                                isLoading={isLoadingConversations}
+                                onSelect={loadConversation}
+                                onNewChat={startNewConversation}
+                                onClose={() => setMobileSheetOpen(false)}
+                            />
+                        </SheetContent>
+                    </Sheet>
+
+                    {/* Center: Title */}
+                    <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-lg bg-federal-navy flex items-center justify-center">
+                            <span className="text-white font-bold text-xs">F</span>
+                        </div>
+                        <span className="font-semibold text-sm">FARchat</span>
+                    </div>
+
+                                    {/* Right: New chat button */}
+                                    <div className="flex items-center">
+                                        <ThemeToggle />
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="min-w-[44px] min-h-[44px]"
+                                            onClick={startNewConversation}
+                                            aria-label="New conversation"
+                                        >
+                                            <Plus className="h-5 w-5" />
+                                        </Button>
+                                    </div>
+                                </header>
+                {/* Desktop Header - Hidden on mobile */}
+                <header className="h-14 hidden md:flex items-center px-4 glass-header supports-[backdrop-filter]:bg-background/60 z-10 sticky top-0 justify-between">
                     <div className="flex items-center gap-2">
                         <Tooltip>
                             <TooltipTrigger asChild>
@@ -393,11 +450,14 @@ export function ChatInterface() {
                         )}
                         <h1 className="font-semibold text-lg tracking-tight hidden sm:block">FARchat <span className="text-primary text-xs ml-1 uppercase bg-primary/10 px-1.5 py-0.5 rounded">Beta</span></h1>
                     </div>
-                    <UserMenu />
+                    <div className="flex items-center gap-2">
+                        <ThemeToggle />
+                        <UserMenu />
+                    </div>
                 </header>
 
-                {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4 md:p-6" ref={scrollRef}>
+                {/* Messages - Add padding bottom for mobile nav */}
+                <div id="main-content" className="flex-1 overflow-y-auto p-4 md:p-6 pb-20 md:pb-6" ref={scrollRef}>
                     <div className="max-w-3xl mx-auto space-y-4 pb-4">
                         {messages.length === 0 && !isLoading && (
                             <EmptyState
@@ -437,8 +497,8 @@ export function ChatInterface() {
                     </div>
                 </div>
 
-                {/* Input Area */}
-                <div className="p-4 border-t border-border bg-background relative">
+                {/* Input Area - Add margin bottom for mobile nav */}
+                <div className="p-4 border-t border-border bg-background relative mb-16 md:mb-0">
                     {/* Usage Limit Overlay */}
                     {!usageState.isLoading && !usageState.isAllowed && (
                         <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center">
@@ -460,10 +520,11 @@ export function ChatInterface() {
                     <div className="max-w-3xl mx-auto">
                         <form onSubmit={handleSubmit} className="flex gap-2">
                             <Input
+                                id="chat-input"
                                 value={input}
                                 onChange={e => setInput(e.target.value)}
                                 placeholder="Ask about FAR Part 15..."
-                                className="flex-1"
+                                className="flex-1 min-h-[44px] text-base"
                                 disabled={isLoading || (!usageState.isLoading && !usageState.isAllowed)}
                                 aria-label="Ask a question about federal acquisition regulations"
                             />
@@ -473,6 +534,7 @@ export function ChatInterface() {
                                         type="submit"
                                         disabled={isLoading || !input.trim() || (!usageState.isLoading && !usageState.isAllowed)}
                                         aria-label="Send message"
+                                        className="min-w-[44px] min-h-[44px]"
                                     >
                                         <Send className="h-4 w-4" />
                                     </Button>
@@ -488,6 +550,12 @@ export function ChatInterface() {
                         </div>
                     </div>
                 </div>
+
+                {/* Mobile Bottom Navigation */}
+                <MobileBottomNav
+                    onNewChat={startNewConversation}
+                    className="md:hidden"
+                />
             </div>
 
             {/* Delete Confirmation Dialog */}
