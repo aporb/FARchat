@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Moon, Sun } from 'lucide-react'
+import { Moon, Sun, Monitor, Check } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 export function ThemeToggle() {
-    const { setTheme } = useTheme()
+    const { theme, setTheme } = useTheme()
     const [mounted, setMounted] = React.useState(false)
 
     // Avoid hydration mismatch
@@ -30,6 +30,12 @@ export function ThemeToggle() {
         )
     }
 
+    const themeOptions = [
+        { value: 'light', label: 'Light', icon: Sun },
+        { value: 'dark', label: 'Dark', icon: Moon },
+        { value: 'system', label: 'System', icon: Monitor },
+    ]
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -39,16 +45,22 @@ export function ThemeToggle() {
                     <span className="sr-only">Toggle theme</span>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
-                    Light
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                    Dark
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                    System
-                </DropdownMenuItem>
+            <DropdownMenuContent align="end" className="min-w-[140px]">
+                {themeOptions.map(({ value, label, icon: Icon }) => (
+                    <DropdownMenuItem
+                        key={value}
+                        onClick={() => setTheme(value)}
+                        className="flex items-center justify-between gap-2"
+                    >
+                        <span className="flex items-center gap-2">
+                            <Icon className="h-4 w-4" />
+                            {label}
+                        </span>
+                        {theme === value && (
+                            <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                        )}
+                    </DropdownMenuItem>
+                ))}
             </DropdownMenuContent>
         </DropdownMenu>
     )
