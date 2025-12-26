@@ -1,6 +1,9 @@
 /**
  * Animation Constants & Utilities
  * Centralized animation configuration for consistent motion design
+ *
+ * WCAG 2.2 Compliance: All animations respect prefers-reduced-motion
+ * Use getAnimationProps() helper for motion-aware animations
  */
 
 // Duration tokens (in seconds)
@@ -130,3 +133,40 @@ export const spinnerTransition = {
     animate: { rotate: 360 },
     transition: { duration: 1, repeat: Infinity, ease: 'linear' },
 } as const
+
+// ============================================
+// REDUCED MOTION SUPPORT (WCAG 2.2)
+// ============================================
+
+// No-motion variants - for users who prefer reduced motion
+export const noMotion = {
+    initial: { opacity: 1 },
+    animate: { opacity: 1 },
+    exit: { opacity: 1 },
+} as const
+
+export const noMotionFade = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+} as const
+
+/**
+ * Helper to get motion-aware animation props
+ * Returns no-motion variants when user prefers reduced motion
+ *
+ * @param standardVariant - The normal animation variant
+ * @param prefersReducedMotion - Whether user prefers reduced motion
+ * @param useFade - Use fade-only instead of instant (default: true)
+ * @returns Animation props respecting user preference
+ */
+export function getAnimationProps<T extends object>(
+    standardVariant: T,
+    prefersReducedMotion: boolean,
+    useFade: boolean = true
+): T {
+    if (prefersReducedMotion) {
+        return (useFade ? noMotionFade : noMotion) as unknown as T
+    }
+    return standardVariant
+}

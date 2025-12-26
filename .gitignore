@@ -43,3 +43,8 @@ secrets.env
 # Supabase local development artifacts
 supabase/supabase/.temp/
 supabase/supabase/supabase/
+
+
+.venv/
+.vscode/ 
+.claude/ 

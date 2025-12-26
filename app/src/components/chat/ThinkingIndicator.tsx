@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bot, Search, FileText, Sparkles } from 'lucide-react'
+import { Bot, Search, FileText, Sparkles, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 interface ThinkingIndicatorProps {
     isVisible: boolean
@@ -18,6 +19,7 @@ const phases = [
 
 export function ThinkingIndicator({ isVisible, className }: ThinkingIndicatorProps) {
     const [currentPhase, setCurrentPhase] = useState(0)
+    const prefersReducedMotion = useReducedMotion()
 
     useEffect(() => {
         if (!isVisible) {
@@ -45,6 +47,31 @@ export function ThinkingIndicator({ isVisible, className }: ThinkingIndicatorPro
 
     const CurrentIcon = phases[currentPhase]?.icon || Search
     const currentText = phases[currentPhase]?.text || 'Thinking...'
+
+    // Simplified view for reduced motion - still functional but less distracting
+    if (prefersReducedMotion) {
+        return (
+            <div className={cn("flex w-full mb-6 justify-start", className)}>
+                <div className="flex max-w-[85%] md:max-w-[75%] gap-x-3">
+                    <div className="w-8 h-8 rounded-sm flex items-center justify-center shrink-0 border shadow-sm bg-primary border-primary text-primary-foreground">
+                        <Bot size={18} />
+                    </div>
+                    <div className="p-4 rounded-lg text-sm shadow-sm border bg-card text-card-foreground border-border min-w-[200px]">
+                        <div className="flex items-center gap-3">
+                            <Loader2 className="w-4 h-4 text-primary" />
+                            <span className="text-sm text-muted-foreground">{currentText}</span>
+                        </div>
+                        <div className="mt-3 h-1 bg-muted rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-primary/50 transition-all duration-300"
+                                style={{ width: `${((currentPhase + 1) / phases.length) * 100}%` }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <motion.div

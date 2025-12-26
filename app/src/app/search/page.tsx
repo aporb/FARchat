@@ -1,19 +1,61 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search as SearchIcon, ArrowRight, Loader2, FileText, Lock } from 'lucide-react'
+import { Search as SearchIcon, ArrowRight, Loader2, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useUsageLimit } from '@/hooks/use-usage-limit'
 import { searchRegulations } from '../actions'
+import { RegulationFilters } from '@/components/search/RegulationFilters'
+import { SearchResultCard, type SearchResult } from '@/components/search/SearchResultCard'
+
+// Local storage key for bookmarks
+const BOOKMARKS_KEY = 'farchat-search-bookmarks'
 
 export default function SearchPage() {
     const [query, setQuery] = useState('')
-    const [results, setResults] = useState<any[]>([])
+    const [rawResults, setRawResults] = useState<any[]>([])
     const [isSearching, setIsSearching] = useState(false)
+    const [selectedRegulation, setSelectedRegulation] = useState('all')
+    const [bookmarks, setBookmarks] = useState<string[]>([])
     const { checkUsage, recordUsage, usageState } = useUsageLimit()
     const router = useRouter()
+
+    // Load bookmarks from localStorage on mount
+    useEffect(() => {
+        const saved = localStorage.getItem(BOOKMARKS_KEY)
+        if (saved) {
+            try {
+                setBookmarks(JSON.parse(saved))
+            } catch {
+                // Ignore parse errors
+            }
+        }
+    }, [])
+
+    // Save bookmarks to localStorage when changed
+    useEffect(() => {
+        localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(bookmarks))
+    }, [bookmarks])
+
+    // Transform raw results to SearchResult format
+    const results: SearchResult[] = useMemo(() => {
+        return rawResults.map((r, i) => ({
+            id: `result-${i}-${r.metadata?.regulation || 'unknown'}-${r.metadata?.title || ''}`,
+            regulation: r.metadata?.regulation || 'Unknown',
+            section: r.metadata?.title || '',
+            title: r.metadata?.title || 'Untitled',
+            excerpt: r.content || '',
+            relevance: Math.round((r.similarity || 0) * 100),
+        }))
+    }, [rawResults])
+
+    // Filter results by selected regulation
+    const filteredResults = useMemo(() => {
+        if (selectedRegulation === 'all') return results
+        return results.filter(r => r.regulation.toUpperCase() === selectedRegulation.toUpperCase())
+    }, [results, selectedRegulation])
 
     async function handleSearch(e: React.FormEvent) {
         e.preventDefault()
@@ -30,18 +72,27 @@ export default function SearchPage() {
             if (error) {
                 console.error(error)
             } else {
-                setResults(results || [])
+                setRawResults(results || [])
             }
         } finally {
             setIsSearching(false)
         }
     }
 
+    function handleBookmark(id: string) {
+        setBookmarks(prev => {
+            if (prev.includes(id)) {
+                return prev.filter(b => b !== id)
+            }
+            return [...prev, id]
+        })
+    }
+
     return (
         <div className="min-h-screen bg-background flex flex-col">
             <header className="border-b border-border bg-card p-4 flex items-center justify-between sticky top-0 z-10">
                 <div className="flex items-center gap-2 font-semibold tracking-tight text-lg">
-                    <div className="w-8 h-8 rounded-lg bg-federal-navy flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-federal-navy dark:bg-blue-600 flex items-center justify-center">
                         <span className="text-white font-bold text-sm">F</span>
                     </div>
                     <span className="ml-2">FARchat Search</span>
@@ -51,7 +102,7 @@ export default function SearchPage() {
                 </Button>
             </header>
 
-            <main className="flex-1 max-w-4xl mx-auto w-full p-6 space-y-8">
+            <main className="flex-1 max-w-4xl mx-auto w-full p-6 space-y-6">
                 {/* Search Bar */}
                 <div className="relative">
                     {!usageState.isLoading && !usageState.isAllowed && (
@@ -71,7 +122,12 @@ export default function SearchPage() {
                             className="h-12 text-lg shadow-sm"
                             disabled={isSearching}
                         />
-                        <Button size="lg" type="submit" disabled={isSearching || !query.trim()}>
+                        <Button
+                            size="lg"
+                            type="submit"
+                            disabled={isSearching || !query.trim()}
+                            className="min-w-[48px] min-h-[48px]"
+                        >
                             {isSearching ? <Loader2 className="h-5 w-5 animate-spin" /> : <SearchIcon className="h-5 w-5" />}
                         </Button>
                     </form>
@@ -80,30 +136,49 @@ export default function SearchPage() {
                     </div>
                 </div>
 
+                {/* Regulation Filters */}
+                {results.length > 0 && (
+                    <RegulationFilters
+                        selected={selectedRegulation}
+                        onSelect={setSelectedRegulation}
+                        className="mt-4"
+                    />
+                )}
+
                 {/* Results */}
                 <div className="space-y-4">
-                    {results.length > 0 ? (
-                        results.map((r, i) => (
-                            <div key={i} className="bg-card border border-border rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="flex items-start justify-between mb-2">
-                                    <div className="flex items-center gap-2 text-primary font-semibold">
-                                        <FileText className="h-4 w-4" />
-                                        {r.metadata?.regulation} {r.metadata?.title}
-                                    </div>
-                                    <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded">
-                                        {(r.similarity * 100).toFixed(0)}% Match
-                                    </span>
-                                </div>
-                                <p className="text-card-foreground/80 text-sm line-clamp-3 leading-relaxed">
-                                    {r.content}
-                                </p>
+                    {filteredResults.length > 0 ? (
+                        <>
+                            <div className="text-sm text-muted-foreground">
+                                Showing {filteredResults.length} of {results.length} results
+                                {selectedRegulation !== 'all' && ` for ${selectedRegulation}`}
                             </div>
-                        ))
+                            {filteredResults.map((result) => (
+                                <SearchResultCard
+                                    key={result.id}
+                                    result={result}
+                                    isBookmarked={bookmarks.includes(result.id)}
+                                    onBookmark={handleBookmark}
+                                />
+                            ))}
+                        </>
                     ) : (
-                        !isSearching && query && (
-                            <div className="text-center py-20 text-muted-foreground">
-                                No results found. Try a different term.
+                        results.length > 0 && selectedRegulation !== 'all' ? (
+                            <div className="text-center py-12 text-muted-foreground">
+                                No results for {selectedRegulation}.
+                                <button
+                                    onClick={() => setSelectedRegulation('all')}
+                                    className="ml-2 text-federal-navy dark:text-blue-400 hover:underline"
+                                >
+                                    Show all results
+                                </button>
                             </div>
+                        ) : (
+                            !isSearching && query && rawResults.length === 0 && (
+                                <div className="text-center py-20 text-muted-foreground">
+                                    No results found. Try a different term.
+                                </div>
+                            )
                         )
                     )}
                 </div>

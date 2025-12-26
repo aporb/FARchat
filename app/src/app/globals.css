@@ -66,17 +66,66 @@
     }
   }
 
-  /* Reduced motion support */
+  /* ============================================
+     ACCESSIBILITY: Reduced Motion Support
+     WCAG 2.2 - Respects user preference
+     ============================================ */
   @media (prefers-reduced-motion: reduce) {
-
     *,
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
+}
+
+/* Component-specific reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse,
+  .animate-spin,
+  .animate-bounce {
+    animation: none !important;
+  }
+
+  /* Framer Motion components - CSS fallback */
+  [data-framer-appear],
+  [data-framer-component-type] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY: Enhanced Focus Ring Standards
+   WCAG 2.2 AA - 2px visible focus indicator
+   ============================================ */
+
+/* Default focus-visible for all interactive elements */
+:focus-visible {
+  outline: 2px solid hsl(var(--federal-navy));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Remove default focus for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: more) {
+  :focus-visible {
+    outline: 3px solid currentColor;
+    outline-offset: 3px;
+  }
+}
+
+/* Ensure focus is visible on dark backgrounds */
+.dark :focus-visible {
+  outline-color: oklch(0.8 0.05 250);
 }
 
 /* ============================================

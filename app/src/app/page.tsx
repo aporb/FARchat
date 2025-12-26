@@ -1,3 +1,5 @@
+'use client'
+
 import dynamic from 'next/dynamic'
 import { Navigation } from "@/components/layout/navigation"
 import { Hero } from "@/components/sections/hero"
@@ -18,6 +20,11 @@ const GetStarted = dynamic(
   { ssr: true }
 )
 
+const FAQ = dynamic(
+  () => import('@/components/sections/faq').then(mod => mod.FAQ),
+  { ssr: true }
+)
+
 const Footer = dynamic(
   () => import('@/components/sections/footer').then(mod => mod.Footer),
   { ssr: true }
@@ -30,7 +37,7 @@ const StickyMobileCTA = dynamic(
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <Navigation />
       <main id="main-content">
         <Hero />
@@ -42,6 +49,7 @@ export default function Home() {
         <section id="access">
           <GetStarted />
         </section>
+        <FAQ />
       </main>
       <Footer />
       <StickyMobileCTA />

@@ -6,8 +6,24 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRightIcon, PlayIcon, CheckIcon } from "@/components/common/icons"
 import { motion } from "framer-motion"
+import { useReducedMotion } from "@/hooks/useReducedMotion"
 
 export function Hero() {
+    const prefersReducedMotion = useReducedMotion()
+
+    // Animation props that respect reduced motion preference
+    const fadeInUp = prefersReducedMotion
+        ? { initial: { opacity: 1 }, animate: { opacity: 1 } }
+        : { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 } }
+
+    const fadeIn = prefersReducedMotion
+        ? { initial: { opacity: 1 }, animate: { opacity: 1 } }
+        : { initial: { opacity: 0 }, animate: { opacity: 1 } }
+
+    const transition = prefersReducedMotion
+        ? { duration: 0.01 }
+        : { duration: 0.5 }
+
     return (
         <section className="relative overflow-hidden bg-slate-50 dark:bg-slate-950 min-h-screen flex flex-col justify-center">
 
@@ -36,9 +52,8 @@ export function Hero() {
 
                     {/* Alpha Badge - Glassmorphism */}
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
+                        {...fadeInUp}
+                        transition={transition}
                     >
                         <Badge
                             variant="outline"
@@ -51,9 +66,8 @@ export function Hero() {
                     {/* Main Headlines */}
                     <motion.div
                         className="max-w-5xl"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.1 }}
+                        {...fadeInUp}
+                        transition={{ ...transition, delay: prefersReducedMotion ? 0 : 0.1 }}
                     >
                         <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-5xl lg:text-6xl mb-6">
                             Total Acquisition <br />
@@ -71,9 +85,8 @@ export function Hero() {
                     {/* CTA Buttons */}
                     <motion.div
                         className="mt-10 flex flex-col sm:flex-row items-center gap-6"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
+                        {...fadeInUp}
+                        transition={{ ...transition, delay: prefersReducedMotion ? 0 : 0.2 }}
                     >
                         <Button
                             size="lg"
@@ -100,9 +113,8 @@ export function Hero() {
                     {/* Agency Logos - Enhanced Typography */}
                     <motion.div
                         className="mt-16 pt-8 border-t border-slate-200/60 dark:border-slate-800 w-full max-w-4xl"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5, delay: 0.4 }}
+                        {...fadeIn}
+                        transition={{ ...transition, delay: prefersReducedMotion ? 0 : 0.4 }}
                     >
                         <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 mb-6 uppercase tracking-[0.2em]">
                             Trusted by federal contracting professionals
@@ -126,12 +138,15 @@ export function Hero() {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-32">
                 <motion.div
                     className="relative max-w-6xl mx-auto"
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                        opacity: { duration: 0.8, delay: 0.5 },
-                        y: { duration: 0.8, delay: 0.5, ease: "easeOut" }
-                    }}
+                    initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 40 }}
+                    animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                    transition={prefersReducedMotion
+                        ? { duration: 0.01 }
+                        : {
+                            opacity: { duration: 0.8, delay: 0.5 },
+                            y: { duration: 0.8, delay: 0.5, ease: "easeOut" }
+                          }
+                    }
                     style={{ transformStyle: "preserve-3d", perspective: "1000px" }}
                 >
                     <div className="relative rounded-2xl bg-slate-900 p-2 shadow-2xl ring-1 ring-white/10 transform rotate-x-12 shadow-federal-navy/30 dark:shadow-blue-900/30">
