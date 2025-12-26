@@ -1,194 +1,149 @@
-# FARchat Landing Page
+# FARchat Web Application
 
-A professional, government-compliant landing page for FARchat - an AI-powered assistant for federal contracting professionals.
+Next.js web application for FARchat - an AI-powered federal acquisition regulation research assistant.
 
-## 🏛️ Government Compliance
+## Tech Stack
 
-This project adheres to federal accessibility standards and security requirements:
+- **Framework**: Next.js 16 with App Router
+- **Language**: TypeScript (strict mode)
+- **Styling**: Tailwind CSS v4
+- **UI Components**: shadcn/ui with glassmorphic design
+- **Authentication**: Supabase Auth (Google OAuth, Magic Link)
+- **Database**: Supabase (PostgreSQL)
+- **Icons**: Lucide React
 
-- **Section 508 Compliance**: Full accessibility support with ARIA labels and keyboard navigation
-- **Security Headers**: CSP, HSTS, and other security headers configured
-- **Manual Deployment Only**: No automated CI/CD for enhanced security control
-- **Clean Architecture**: Professional, maintainable codebase
+## Getting Started
 
-## 🚀 Tech Stack
+```bash
+# Install dependencies
+npm install
 
-- **Framework**: Next.js 15 with App Router
-- **Language**: TypeScript with strict configuration
-- **Styling**: Tailwind CSS 4 with custom government color palette
-- **UI Components**: shadcn/ui with professional theming
-- **Icons**: Custom SVG icons with Lucide React
-- **Development**: ESLint with accessibility rules
+# Set up environment variables
+cp .env.example .env.local
 
-## 🏛️ Target Audience
+# Run development server
+npm run dev
 
-- GS-1102 Contracting Officers
-- Federal Procurement Analysts  
-- Contract Specialists
-- Government contracting professionals
+# Build for production
+npm run build
+```
 
-## 📱 Features
+## Project Structure
 
-- ✅ Responsive design optimized for government professionals
-- ✅ Professional branding with government-appropriate colors (no gradients)
-- ✅ Alpha program signup with validation
-- ✅ Feature showcase highlighting FAR/DFARS capabilities
-- ✅ Trust indicators and security compliance badges
-- ✅ Professional navigation with accessibility support
-- ✅ Section 508 compliant (WCAG 2.1 AA)
-- ✅ Government security headers and CSP
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── (auth)/            # Auth-required routes
+│   ├── api/               # API routes
+│   │   ├── chat/          # Chat API endpoint
+│   │   └── contact/       # Contact form API
+│   ├── about/             # About page
+│   ├── changelog/         # Product changelog
+│   ├── chat/              # Chat interface
+│   ├── compliance/        # Security & compliance info
+│   ├── contact/           # Contact form
+│   ├── demo/              # Product demo
+│   ├── features/          # Features page
+│   ├── legal/             # Legal pages (privacy, terms, cookies)
+│   ├── login/             # Authentication
+│   ├── search/            # Search interface
+│   ├── security/          # Security documentation
+│   └── vpat/              # Accessibility statement
+├── components/
+│   ├── ui/                # shadcn/ui components
+│   ├── layout/            # Navigation, headers
+│   ├── sections/          # Page sections (hero, features, footer)
+│   └── common/            # Shared components (logo, icons)
+└── lib/
+    ├── supabase/          # Supabase client configuration
+    └── utils.ts           # Utility functions
+```
 
-## 🚦 Manual Deployment
+## Pages
 
-### Local Development & Testing
+### Public Pages
+| Route | Description |
+|-------|-------------|
+| `/` | Landing page |
+| `/about` | About FARchat |
+| `/features` | Feature details |
+| `/compliance` | Security & compliance status |
+| `/demo` | Product demo |
+| `/contact` | Contact form |
+| `/changelog` | Product updates |
+| `/security` | Security practices |
+| `/vpat` | Accessibility statement |
+| `/legal/privacy` | Privacy policy |
+| `/legal/terms` | Terms of service |
+| `/legal/cookies` | Cookie policy |
+
+### Authenticated Pages
+| Route | Description |
+|-------|-------------|
+| `/chat` | AI chat interface |
+| `/search` | Regulation search |
+
+## Design System
+
+### Colors
+- **Federal Navy**: `#1B263B` - Primary brand color
+- **Blue**: `#3b82f6` - Accent and interactive elements
+- **Amber**: `#f59e0b` - Warnings and "pursuing" status
+- **Green**: `#22c55e` - Success and "complete" status
+
+### Components
+- Glassmorphic dropdowns with backdrop blur
+- Mobile-first responsive design
+- Dark mode support throughout
+- Accessible focus indicators
+
+## Environment Variables
+
+```bash
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+
+# App URL
+NEXT_PUBLIC_APP_URL=https://farchat.app
+
+# Optional: Analytics
+NEXT_PUBLIC_GA_MEASUREMENT_ID=your_ga_id
+```
+
+## Compliance
+
+- **Section 508**: Building for WCAG 2.1 AA compliance
+- **FedRAMP**: Pursuing authorization
+- **Security**: AES-256 encryption, TLS 1.3, US data centers
+
+## Deployment
 
 ```bash
 # Build and test locally
 npm run build
 npm run start
 
-# Or use the deployment script for local testing
-./scripts/deploy.sh local
-```
-
-### Vercel Deployment (Manual Only)
-
-```bash
-# 1. Build the application
-npm run build
-
-# 2. Deploy manually to Vercel
+# Deploy to Vercel
 vercel --prod
 ```
 
-**Note**: No automated deployments or GitHub workflows are configured. All deployments must be done manually.
+Manual deployment only - no automated CI/CD.
 
-### Custom Domain (Manual Setup)
+## Development
 
-1. **Build and verify locally first**
-2. **Deploy manually to Vercel using CLI**
-3. **Configure domain in Vercel dashboard manually**
-4. **Update DNS records as instructed by Vercel**
-
-## 🔧 Configuration
-
-### Environment Variables
-
-Copy `.env.example` to `.env.local` and configure:
+### Adding shadcn/ui Components
 
 ```bash
-# Required for production
-NEXT_PUBLIC_APP_URL=https://farchat.app
-NEXT_PUBLIC_ALPHA_SIGNUP_ENABLED=true
-
-# Optional analytics
-NEXT_PUBLIC_GA_MEASUREMENT_ID=your_ga_id
-VERCEL_ANALYTICS_ID=your_vercel_analytics_id
+npx shadcn@latest add [component-name]
 ```
-
-### Vercel Configuration
-
-The `vercel.json` file includes:
-- Security headers for government compliance
-- Redirect rules for common URLs
-- Build optimization settings
-- Static asset caching strategies
-- **NO automated deployment triggers**
-
-## 📊 Performance
-
-- **Build Size**: ~133 KB total JavaScript
-- **First Load**: Optimized for fast initial page loads
-- **Static Generation**: All pages pre-rendered at build time
-- **Image Optimization**: Next.js automatic image optimization
-- **Font Optimization**: Self-hosted fonts with display swap
-
-## 🔒 Security Features
-
-- Content Security Policy headers
-- XSS protection
-- Clickjacking protection via X-Frame-Options
-- HTTPS enforcement
-- Referrer policy configuration
-- Input validation on all forms
-
-## 🎯 SEO Optimization
-
-- Semantic HTML structure
-- Meta tags optimized for government contracting keywords
-- Open Graph and Twitter Card support
-- Structured data for better search visibility
-- Government-specific keywords and descriptions
-
-## 📂 Project Structure
-
-```
-src/
-├── app/                 # Next.js App Router pages
-├── components/
-│   ├── ui/             # shadcn/ui components
-│   ├── layout/         # Layout components (Header, Footer)
-│   ├── sections/       # Page sections (Hero, Features, etc.)
-│   └── common/         # Shared components (Logo, Icons)
-├── lib/
-│   ├── utils.ts        # Utility functions
-│   └── constants.ts    # App constants and configuration
-└── styles/
-    └── globals.css     # Global styles and CSS variables
-```
-
-## 🛠️ Development
 
 ### Code Standards
-
-- TypeScript for type safety
+- TypeScript strict mode
 - ESLint for code quality
-- Prettier for code formatting
 - Semantic commit messages
 - Component-based architecture
 
-### Adding New Components
-
-```bash
-# Add new shadcn/ui components
-npx shadcn@latest add [component-name]
-
-# Create custom components in appropriate directories
-src/components/sections/    # Page sections
-src/components/common/      # Reusable components
-src/components/layout/      # Layout components
-```
-
-### Customizing Design
-
-1. **Colors**: Update `tailwind.config.ts` and CSS variables
-2. **Typography**: Modify font imports in `layout.tsx`
-3. **Components**: Extend shadcn/ui components or create custom ones
-4. **Icons**: Add new SVG icons to `src/components/common/icons.tsx`
-
-## 📈 Analytics & Monitoring
-
-- Vercel Analytics for performance monitoring (manual setup)
-- Google Analytics for user behavior tracking (manual setup)
-- Core Web Vitals monitoring
-- Error tracking and reporting
-
-## 🔄 Manual Deployment Process
-
-**No automated deployments are configured.** All deployments require manual intervention:
-
-1. **Build Process**: Run `npm run build` locally
-2. **Testing**: Test with `npm run start` 
-3. **Manual Deploy**: Use `vercel --prod` for production deployment
-4. **Verification**: Manually verify deployment success
-
-## 📞 Support
-
-For technical issues or deployment questions:
-- Email: dev@farchat.app
-- Documentation: [Internal docs]
-- Status Page: [Coming soon]
-
-## 📄 License
+## License
 
 Proprietary - FARchat Team
