@@ -16,6 +16,56 @@ export const metadata: Metadata = {
     description: "Watch how FARchat helps federal acquisition professionals research regulations faster.",
 }
 
+// Configure video URL here - supports YouTube, Vimeo, or direct video URLs
+// Set to null or empty string to show the placeholder
+const DEMO_VIDEO_URL: string | null = null // e.g., "https://www.youtube.com/embed/VIDEO_ID" or "https://player.vimeo.com/video/VIDEO_ID"
+
+function VideoEmbed({ url }: { url: string | null }) {
+    if (!url) {
+        // Fallback placeholder when no video URL is configured
+        return (
+            <div className="aspect-video bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-800 dark:to-slate-900 rounded-2xl flex flex-col items-center justify-center border border-slate-700 dark:border-slate-600 shadow-2xl relative overflow-hidden">
+                {/* Decorative background pattern */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-blue-500 rounded-full blur-3xl" />
+                    <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-indigo-500 rounded-full blur-3xl" />
+                </div>
+
+                <div className="relative z-10 text-center px-6">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mb-6 mx-auto shadow-lg shadow-blue-500/25">
+                        <PlayIcon className="w-8 h-8 text-white ml-1" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-white mb-2">
+                        Demo Video Launching Soon
+                    </h3>
+                    <p className="text-slate-400 max-w-md mx-auto mb-6">
+                        We&apos;re preparing a walkthrough to show you how FARchat transforms federal acquisition research.
+                    </p>
+                    <Button asChild variant="outline" className="border-slate-600 text-white hover:bg-slate-800">
+                        <Link href="/alpha">
+                            Sign Up for Early Access
+                            <ArrowRightIcon className="w-4 h-4 ml-2" />
+                        </Link>
+                    </Button>
+                </div>
+            </div>
+        )
+    }
+
+    // Render embedded video player
+    return (
+        <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-700">
+            <iframe
+                src={url}
+                title="FARchat Demo Video"
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+            />
+        </div>
+    )
+}
+
 const demoFeatures = [
     {
         icon: MessageSquareIcon,
@@ -60,18 +110,7 @@ export default function DemoPage() {
             {/* Video Section */}
             <section className="py-8 md:py-12">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-                    {/* Video Placeholder */}
-                    <div className="aspect-video bg-slate-900 dark:bg-slate-800 rounded-2xl flex flex-col items-center justify-center border border-slate-800 dark:border-slate-700 shadow-2xl">
-                        <div className="w-20 h-20 rounded-full bg-slate-800 dark:bg-slate-700 flex items-center justify-center mb-4">
-                            <PlayIcon className="w-8 h-8 text-slate-400" />
-                        </div>
-                        <p className="text-slate-400 text-center px-4">
-                            Demo video coming soon
-                        </p>
-                        <p className="text-slate-500 text-sm mt-2 text-center px-4">
-                            Sign up for early access to see FARchat in action
-                        </p>
-                    </div>
+                    <VideoEmbed url={DEMO_VIDEO_URL} />
                 </div>
             </section>
 

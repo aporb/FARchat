@@ -18,12 +18,12 @@ export default function GlobalError({
   return (
     <html lang="en">
       <body>
-        <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4">
+        <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-slate-950 px-4">
           <div className="w-full max-w-md text-center">
             {/* Error Icon */}
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-950">
               <svg
-                className="h-8 w-8 text-red-600"
+                className="h-8 w-8 text-red-600 dark:text-red-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -38,17 +38,17 @@ export default function GlobalError({
             </div>
 
             {/* Error Message */}
-            <h1 className="mb-2 text-2xl font-bold text-gray-900">
+            <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-slate-50">
               Something went wrong
             </h1>
-            <p className="mb-6 text-gray-600">
+            <p className="mb-6 text-gray-600 dark:text-slate-400">
               We apologize for the inconvenience. Our team has been notified and
               is working to fix the issue.
             </p>
 
             {/* Error Details (only in development) */}
             {process.env.NODE_ENV === "development" && error.digest && (
-              <p className="mb-4 font-mono text-sm text-gray-500">
+              <p className="mb-4 font-mono text-sm text-gray-500 dark:text-slate-500">
                 Error ID: {error.digest}
               </p>
             )}
@@ -57,13 +57,13 @@ export default function GlobalError({
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
               <button
                 onClick={() => reset()}
-                className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950"
               >
                 Try again
               </button>
               <button
                 onClick={() => (window.location.href = "/")}
-                className="rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                className="rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-6 py-3 font-medium text-gray-700 dark:text-slate-300 transition-colors hover:bg-gray-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-slate-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950"
               >
                 Go to homepage
               </button>
@@ -71,7 +71,7 @@ export default function GlobalError({
           </div>
 
           {/* Footer */}
-          <p className="mt-8 text-sm text-gray-500">
+          <p className="mt-8 text-sm text-gray-500 dark:text-slate-500">
             If this problem persists, please contact support.
           </p>
         </div>

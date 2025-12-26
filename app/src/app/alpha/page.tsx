@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function AlphaPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-slate-950">
       <Navigation />
       <main>
         <AlphaSignup />

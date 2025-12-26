@@ -70,9 +70,9 @@ export function Hero() {
                         transition={{ ...transition, delay: prefersReducedMotion ? 0 : 0.1 }}
                     >
                         <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-5xl lg:text-6xl mb-6">
-                            Total Acquisition <br />
+                            Research FAR in seconds, <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-federal-navy to-blue-600 dark:from-blue-400 dark:to-blue-200">
-                                Command
+                                not hours.
                             </span>
                         </h1>
 
@@ -117,7 +117,7 @@ export function Hero() {
                         transition={{ ...transition, delay: prefersReducedMotion ? 0 : 0.4 }}
                     >
                         <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 mb-6 uppercase tracking-[0.2em]">
-                            Trusted by federal contracting professionals
+                            Built for acquisition professionals across government
                         </p>
                         <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-6">
                             {['DOD', 'GSA', 'VA', 'DHS', 'NASA', 'ARMY', 'NAVY'].map((agency) => (

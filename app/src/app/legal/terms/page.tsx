@@ -12,7 +12,7 @@ export default function TermsPage() {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
                 <article className="prose prose-slate dark:prose-invert max-w-none">
                     <h1>Terms of Service</h1>
-                    <p className="text-slate-500 dark:text-slate-400">Last Updated: December 2024</p>
+                    <p className="text-slate-500 dark:text-slate-400">Last Updated: December 2025</p>
 
                     <p>
                         Please read these Terms of Service (&quot;Terms&quot;) carefully before using FARchat. By accessing or using our service, you agree to be bound by these Terms.

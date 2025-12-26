@@ -12,7 +12,7 @@ export default function PrivacyPage() {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
                 <article className="prose prose-slate dark:prose-invert max-w-none">
                     <h1>Privacy Policy</h1>
-                    <p className="text-slate-500 dark:text-slate-400">Last Updated: December 2024</p>
+                    <p className="text-slate-500 dark:text-slate-400">Last Updated: December 2025</p>
 
                     <p>
                         FARchat (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our service.

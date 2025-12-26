@@ -12,7 +12,7 @@ export default function CookiesPage() {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
                 <article className="prose prose-slate dark:prose-invert max-w-none">
                     <h1>Cookie Policy</h1>
-                    <p className="text-slate-500 dark:text-slate-400">Last Updated: December 2024</p>
+                    <p className="text-slate-500 dark:text-slate-400">Last Updated: December 2025</p>
 
                     <p>
                         This Cookie Policy explains how FARchat (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) uses cookies and similar technologies when you visit our website or use our services.

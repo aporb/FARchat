@@ -92,8 +92,8 @@ export function Features() {
             <div className="absolute top-0 right-0 p-4 opacity-10">
               <ZapIcon size={120} />
             </div>
-            <h3 className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-1">85%</h3>
-            <p className="text-sm font-semibold text-federal-navy dark:text-blue-400 uppercase tracking-wider mb-4">Time Reduction</p>
+            <h3 className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-1">10x</h3>
+            <p className="text-sm font-semibold text-federal-navy dark:text-blue-400 uppercase tracking-wider mb-4">Faster Research</p>
             <p className="text-slate-600 dark:text-slate-400 text-sm">
               Cut research time from hours to seconds.
             </p>
@@ -103,10 +103,10 @@ export function Features() {
           <div className="md:col-span-1 md:col-start-2 relative group overflow-hidden rounded-3xl bg-federal-navy text-white p-8 shadow-lg hover-elevate">
             <div className="absolute inset-0 bg-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="relative z-10">
-              <h3 className="text-4xl font-bold mb-1">99.9%</h3>
-              <p className="text-sm font-semibold text-blue-200 uppercase tracking-wider mb-4">Citation Accuracy</p>
+              <h3 className="text-3xl font-bold mb-1">Precise</h3>
+              <p className="text-sm font-semibold text-blue-200 uppercase tracking-wider mb-4">Citations</p>
               <p className="text-blue-100 text-sm">
-                Every answer links directly to the source text.
+                Every answer links directly to the source regulation.
               </p>
             </div>
           </div>

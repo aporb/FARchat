@@ -15,7 +15,7 @@ const FAQ_ITEMS = [
     },
     {
         question: "Is FARchat compliant with federal security requirements?",
-        answer: "Yes. FARchat is FedRAMP Ready, SOC 2 Type II certified, Section 508 compliant for accessibility, and ITAR compliant. We can provide VPAT documentation upon request."
+        answer: "FARchat is designed with federal security requirements in mind. We're actively pursuing FedRAMP authorization, building for Section 508 accessibility, and have SOC 2 on our roadmap. See our Compliance page for current status."
     },
     {
         question: "How accurate are FARchat's responses?",
