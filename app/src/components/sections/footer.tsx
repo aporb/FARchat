@@ -6,9 +6,9 @@ const FOOTER_LINKS = {
     product: {
         title: 'Product',
         links: [
-            { label: 'Features', href: '#features' },
-            { label: 'Pricing', href: '#pricing' },
-            { label: 'FAQ', href: '#faq' },
+            { label: 'Features', href: '/features' },
+            { label: 'Demo', href: '/demo' },
+            { label: 'FAQ', href: '/#faq' },
             { label: 'Changelog', href: '/changelog' },
         ],
     },
@@ -25,9 +25,9 @@ const FOOTER_LINKS = {
         title: 'Company',
         links: [
             { label: 'About', href: '/about' },
+            { label: 'Compliance', href: '/compliance' },
             { label: 'Contact', href: '/contact' },
             { label: 'Security', href: '/security' },
-            { label: 'VPAT', href: '/vpat' },
         ],
     },
     legal: {
@@ -35,7 +35,8 @@ const FOOTER_LINKS = {
         links: [
             { label: 'Privacy Policy', href: '/legal/privacy' },
             { label: 'Terms of Service', href: '/legal/terms' },
-            { label: 'Cookie Policy', href: '/cookies' },
+            { label: 'Cookie Policy', href: '/legal/cookies' },
+            { label: 'VPAT', href: '/vpat' },
         ],
     },
 }

@@ -5,23 +5,23 @@ import { cn } from '@/lib/utils'
 const trustSignals = [
     {
         icon: Shield,
-        label: 'FedRAMP Ready',
+        label: 'Pursuing FedRAMP',
         description: 'Cloud security authorization'
     },
     {
         icon: Eye,
-        label: 'Section 508',
-        description: 'Accessibility compliant'
+        label: 'Building for 508',
+        description: 'Accessibility in progress'
     },
     {
         icon: Lock,
-        label: 'SOC 2 Type II',
-        description: 'Security certified'
+        label: 'SOC 2 Planned',
+        description: 'Security certification roadmap'
     },
     {
         icon: FileCheck,
-        label: 'ITAR Compliant',
-        description: 'Export controlled'
+        label: 'ITAR Architecture',
+        description: 'Export control ready'
     },
 ]
 
@@ -57,8 +57,8 @@ export function TrustSignals({ className, variant = 'default' }: TrustSignalsPro
                         Built for Federal Standards
                     </h2>
                     <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-                        FARchat meets the rigorous security and accessibility requirements
-                        expected by federal agencies.
+                        FARchat is building toward the rigorous security and accessibility
+                        requirements expected by federal agencies.
                     </p>
                 </div>
 

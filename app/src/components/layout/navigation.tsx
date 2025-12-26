@@ -16,9 +16,9 @@ import { Menu } from "lucide-react"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 const navLinks = [
-    { href: "#features", label: "Features" },
-    { href: "#compliance", label: "Compliance" },
-    { href: "#demo", label: "Demo" },
+    { href: "/features", label: "Features" },
+    { href: "/compliance", label: "Compliance" },
+    { href: "/demo", label: "Demo" },
 ]
 
 export function Navigation() {
@@ -46,13 +46,13 @@ export function Navigation() {
                             variant="outline"
                             className="text-xs text-slate-600 border-slate-300 bg-slate-50 dark:text-slate-400 dark:border-slate-700 dark:bg-slate-900"
                         >
-                            FedRAMP Ready
+                            Pursuing FedRAMP
                         </Badge>
                         <Badge
                             variant="outline"
                             className="text-xs text-slate-600 border-slate-300 bg-slate-50 dark:text-slate-400 dark:border-slate-700 dark:bg-slate-900"
                         >
-                            Section 508
+                            Building for 508
                         </Badge>
                     </div>
 
@@ -78,7 +78,7 @@ export function Navigation() {
                             className="hidden sm:inline-flex text-slate-700 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-slate-100 dark:hover:bg-slate-800"
                             asChild
                         >
-                            <Link href="#demo">
+                            <Link href="/demo">
                                 View Demo
                             </Link>
                         </Button>
@@ -133,7 +133,7 @@ export function Navigation() {
                                         className="w-full"
                                         asChild
                                     >
-                                        <Link href="#demo" onClick={() => setSheetOpen(false)}>
+                                        <Link href="/demo" onClick={() => setSheetOpen(false)}>
                                             View Demo
                                         </Link>
                                     </Button>
