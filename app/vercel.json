@@ -13,11 +13,6 @@
       "GENERATE_SOURCEMAP": "false"
     }
   },
-  "functions": {
-    "src/app/**/*": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "headers": [
     {
       "source": "/(.*)",
