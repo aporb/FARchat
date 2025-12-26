@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { createSupabaseAdminClient } from "@/lib/supabase-server"
 
 // Simple in-memory rate limiting (in production, use Redis or similar)
 const rateLimitMap = new Map<string, { count: number; timestamp: number }>()
@@ -61,26 +62,50 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // In production, you would:
-        // 1. Send email via SendGrid, AWS SES, or similar
-        // 2. Store in database
-        // 3. Send to CRM like HubSpot or Salesforce
+        // Get user agent for logging
+        const userAgent = request.headers.get("user-agent") || "unknown"
 
-        // For now, log the submission (replace with actual implementation)
-        console.log("Contact form submission:", {
-            name,
+        // Store submission in Supabase
+        const supabase = createSupabaseAdminClient()
+
+        const { data, error: dbError } = await supabase
+            .from("contact_submissions")
+            .insert({
+                name,
+                email,
+                company: company || null,
+                subject,
+                message,
+                ip_address: ip,
+                user_agent: userAgent,
+                status: "new",
+            })
+            .select("id")
+            .single()
+
+        if (dbError) {
+            console.error("Failed to save contact submission:", dbError)
+            // Don't expose database errors to client
+            return NextResponse.json(
+                { error: "Failed to process your message. Please try again." },
+                { status: 500 }
+            )
+        }
+
+        // Log successful submission
+        console.log("Contact form submission saved:", {
+            id: data.id,
             email,
-            company: company || "Not provided",
             subject,
-            message,
             timestamp: new Date().toISOString(),
         })
 
-        // Simulate processing delay
-        await new Promise((resolve) => setTimeout(resolve, 500))
-
         return NextResponse.json(
-            { success: true, message: "Message sent successfully" },
+            {
+                success: true,
+                message: "Message sent successfully",
+                id: data.id
+            },
             { status: 200 }
         )
     } catch (error) {
