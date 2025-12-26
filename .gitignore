@@ -48,3 +48,6 @@ supabase/supabase/supabase/
 .venv/
 .vscode/ 
 .claude/ 
+supabase/**
+
+.temp/ 
