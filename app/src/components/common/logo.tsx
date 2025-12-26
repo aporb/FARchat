@@ -36,12 +36,12 @@ export function Logo({
           {/* Simple geometric logo */}
           <rect
             x="4"
-            y="6" 
+            y="6"
             width="16"
             height="12"
             rx="2"
             fill="currentColor"
-            className="text-slate-900"
+            className="text-slate-900 dark:text-slate-100"
           />
           <circle
             cx="18"
@@ -77,7 +77,7 @@ export function Logo({
       {/* Brand Text */}
       {showText && (
         <span className={cn(
-          "font-semibold tracking-tight text-slate-900", 
+          "font-semibold tracking-tight text-slate-900 dark:text-slate-100",
           textSizeClasses[size]
         )}>
           FARchat

@@ -40,22 +40,6 @@ export function Navigation() {
                         </Badge>
                     </Link>
 
-                    {/* Trust Badges - Hidden on mobile */}
-                    <div className="hidden lg:flex items-center space-x-3">
-                        <Badge
-                            variant="outline"
-                            className="text-xs text-slate-600 border-slate-300 bg-slate-50 dark:text-slate-400 dark:border-slate-700 dark:bg-slate-900"
-                        >
-                            Pursuing FedRAMP
-                        </Badge>
-                        <Badge
-                            variant="outline"
-                            className="text-xs text-slate-600 border-slate-300 bg-slate-50 dark:text-slate-400 dark:border-slate-700 dark:bg-slate-900"
-                        >
-                            Building for 508
-                        </Badge>
-                    </div>
-
                     {/* Desktop Navigation Links */}
                     <div className="hidden md:flex items-center space-x-6">
                         {navLinks.map(link => (
