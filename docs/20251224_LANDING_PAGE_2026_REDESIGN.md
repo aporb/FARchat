@@ -2,675 +2,533 @@
 
 > **Document Type:** Product Design Specification
 > **Author:** Design & Product Team
-> **Last Updated:** December 2024
+> **Last Updated:** 26 December 2025
 > **Status:** Planning Phase
+> **Design Approach:** Mobile-First
 
 ---
 
 ## Executive Summary
 
-The current FARchat landing page is **functionally solid** with strong accessibility foundations but relies heavily on design trends from 2022-2024 that are becoming dated. This document outlines a comprehensive modernization strategy to create a distinctive, premium experience ready for 2026.
+The current FARchat landing page is **functionally solid** with strong accessibility foundations but requires modernization for 2026 industry standards. This document outlines a comprehensive **mobile-first** strategy aligned with December 2025 design trends.
 
 **Current Score:** 6.8/10
 **Target Score:** 9.0/10
 
-**Key Insight:** The foundation (color system, typography, accessibility) is excellent. Modernization focuses on design direction shifts, not structural overhaul.
+**Key Stats (2025):**
+- **60.9%** of global web traffic comes from mobile devices ([Source](https://www.brandvm.com/post/mobile-first-design-principles-2025))
+- **5x** more likely users abandon tasks on non-mobile-optimized sites
+- **$100 ROI** for every $1 invested in UX design ([Source](https://spdload.com/blog/mobile-app-ui-ux-design-trends/))
 
 ---
 
-## Part 1: Design Audit Summary
+## Part 1: Mobile-First Design Foundation
 
-### What's Working
+### 1.1 Core Philosophy
 
-| Element | Assessment |
-|---------|------------|
-| Typography (Inter + JetBrains Mono) | Modern, readable, professional |
-| Color System (oklch-based) | Future-proof, consistent |
-| Accessibility | Strong focus rings, contrast ratios |
-| Layout Structure | Logical flow, semantic HTML |
-| Code Architecture | Clean component separation |
+**Mobile is the starting point, not an afterthought.**
 
-### What's Dated (Must Change)
+In 2026, landing pages must be constructed with mobile in mind first: fast loading, adaptive layouts, thumb-friendly buttons, and minimalist content. Designers optimize for smaller screens first, then scale up. ([Source](https://www.involve.me/blog/landing-page-design-trends))
 
-| Pattern | Problem | 2026 Alternative |
-|---------|---------|------------------|
-| Gradient text on headings | Peaked 2023-2024, now cliché | Solid colors with subtle weight variation |
-| Glassmorphism cards | 2022 trend, feels overdone | Solid surfaces with elevation shadows |
-| `hover:scale-105` effects | Basic, every site uses this | Subtle elevation/shadow shifts |
-| Bento grid layout | Ubiquitous (Vercel, Linear, etc.) | Asymmetric layouts, scroll-driven sections |
-| Large stat metrics | Number-heavy cards feel dated | Integrated metrics within context |
-| Emoji in UI (🛡️ 🇺🇸) | Unprofessional for enterprise SaaS | Custom icons or no decorative elements |
-| Pulsing/pinging animations | Excessive for status indicators | Static with subtle hover states |
-| Mock chat UI in hero | Takes space, not convincing | Real product screenshots or video |
+```
+DESIGN ORDER:
+1. Mobile (320-428px) → Primary design target
+2. Tablet (768-1024px) → Scaled up
+3. Desktop (1280px+) → Enhanced experience
+```
 
-### Critical Gaps
+### 1.2 Touch Target Requirements (WCAG 2.2)
 
-1. **No mobile navigation** — Links disappear on mobile with no fallback
-2. **No social proof** — No testimonials, case studies, or logos
-3. **Minimal assets** — Only 2 images, no product screenshots
-4. **Missing footer content** — No resources, blog, or company info
+| Standard | Minimum Size | Use Case |
+|----------|--------------|----------|
+| WCAG 2.2 AA | 24×24 CSS pixels | Absolute minimum |
+| WCAG 2.1 AAA | 44×44 CSS pixels | Recommended for all interactive elements |
+| Apple HIG | 44×44 points | iOS compliance |
+| Material Design | 48×48 dp | Android compliance |
+
+**Scientific Basis:** MIT Touch Lab research shows average fingertip width of 45-57 pixels, with thumbs averaging 2.5cm ([Source](https://accessibility.digital.gov/ux/touch-targets/))
+
+### 1.3 Thumb Zone Design
+
+```
+┌─────────────────────┐
+│    HARD TO REACH    │  ← Secondary actions, menu
+│                     │
+├─────────────────────┤
+│   MEDIUM REACH      │  ← Navigation, content
+│                     │
+├─────────────────────┤
+│    EASY TO REACH    │  ← Primary CTAs, core actions
+│  ┌───────────────┐  │
+│  │   STICKY CTA  │  │  ← Bottom-fixed primary action
+│  └───────────────┘  │
+└─────────────────────┘
+```
+
+**Implementation:**
+- Place primary CTAs in bottom 1/3 of viewport
+- Use sticky bottom CTA on scroll (with dismiss option)
+- Navigation in top 1/3 (acceptable for infrequent use)
 
 ---
 
-## Part 2: 2026 Design Philosophy
+## Part 2: 2025-2026 Design Trends Update
 
-### Core Principles
+### 2.1 What's Actually Trending (Corrected)
 
-#### 1. Clarity Over Decoration
-Remove visual effects that don't serve communication. Every gradient, animation, and shadow must justify its existence.
+Based on December 2025 research, previous assumptions about "dead" trends need correction:
 
-```
-OLD: Glassmorphic card with blur, gradient, and hover scale
-NEW: Solid card with single elevation shadow
-```
+| Trend | Status | 2026 Application |
+|-------|--------|------------------|
+| Glassmorphism | **Evolving, not dead** | "Smarter, more restrained, and functional" - use sparingly for depth, especially for AR/Vision Pro contexts ([Source](https://medium.com/design-bootcamp/ui-design-trend-2026-2-glassmorphism-and-liquid-design-make-a-comeback-50edb60ca81e)) |
+| Bento Grids | **Still valid** | "Timeless staples that aren't going away" - use with restraint, avoid generic Framer template look ([Source](https://dartstudios.uk/blog/ui-design-trends-in-2025)) |
+| Dark Mode | **Expected** | Not optional - users expect light/dark mode toggle. High contrast themes improve accessibility ([Source](https://www.involve.me/blog/landing-page-design-trends)) |
+| Gradient Text | Declining | Use solid colors with subtle weight variation instead |
+| Scale Hover Effects | Dated | Replace with elevation/shadow shifts |
 
-#### 2. Distinctive, Not Trendy
-Avoid patterns that signal "template" or "AI-generated." Create recognizable visual identity.
+### 2.2 What's Definitely Modern (2026)
 
-```
-OLD: Bento grid that looks like every Framer template
-NEW: Asymmetric layouts unique to FARchat
-```
+| Pattern | Description | Source |
+|---------|-------------|--------|
+| **Performance-First Visuals** | Easy-to-load images, subtle micro-interactions, illustrations over heavy video | [Outbrain](https://www.outbrain.com/blog/landing-page-design-trends/) |
+| **Bold Typography** | Oversized, expressive fonts with concise headlines | [Involve.me](https://www.involve.me/blog/landing-page-design-trends) |
+| **Clean Minimalism** | Generous whitespace, single prominent CTA per section | [Involve.me](https://www.involve.me/blog/landing-page-design-trends) |
+| **Trust-First Design** | Social proof not buried at bottom - integrated throughout | [Eloqwnt](https://www.eloqwnt.com/blog/landing-page-design-trends-for-2025-what-drives-conversions-today) |
+| **Full-Page Headers** | Key text/CTA left, visuals right (F-pattern reading) | [WebFX](https://www.webfx.com/blog/web-design/modern-web-design/) |
+| **AI Personalization** | Content/offers adapt based on visitor behavior | [GetResponse](https://www.getresponse.com/blog/landing-page-design-trends) |
 
-#### 3. Motion with Purpose
-Animations should guide attention and provide feedback, not decorate.
+### 2.3 What's Dated (Must Change)
 
-```
-OLD: Everything fades in with staggered delays
-NEW: Strategic motion only on interactive elements
-```
-
-#### 4. Product-First Presence
-Show the actual product. Mock UIs feel deceptive; real screenshots build trust.
-
-```
-OLD: 600px tall fake chat interface
-NEW: Actual product screenshot or demo video
-```
-
-#### 5. Government-Grade Trust
-For federal audience, premium means reliable, not flashy. Think Bloomberg Terminal, not Stripe.
+| Pattern | Problem | Modern Alternative |
+|---------|---------|-------------------|
+| Desktop-first design | 60%+ traffic is mobile | Mobile-first always |
+| Emoji in professional UI | Unprofessional for enterprise/gov | Custom icons or none |
+| Generic stock photos | Users expect authenticity | Real product screenshots |
+| Cluttered layouts | "Bulky, cluttered design is out" | Clean, focused sections |
+| Auto-play videos | Performance killer | Opt-in video, static visuals |
+| Multiple CTAs per section | Dilutes focus | One CTA per section |
 
 ---
 
-## Part 3: Component-Level Redesign
+## Part 3: Accessibility & Compliance (Federal Requirements)
 
-### 3.1 Navigation
+### 3.1 WCAG 2.2 AA Compliance (Required for Federal Clients)
 
-**Current Issues:**
-- Mobile links disappear (no menu fallback)
-- Emoji badges (🛡️ ♿) feel unprofessional
-- Competes visually with page content
+FARchat serves federal government clients. Under Section 508 of the Rehabilitation Act, vendors must demonstrate WCAG 2.1/2.2 Level AA compliance via VPATs (Voluntary Product Accessibility Templates) ([Source](https://www.aufaitux.com/blog/wcag-2-2-compliance-saas-government-platforms/))
 
-**2026 Design:**
+**Key Deadlines:**
+- **June 28, 2025:** European Accessibility Act compliance required for EU
+- **April 24, 2026:** DOJ Title II ADA deadline for entities serving 50,000+
+- **Ongoing:** Section 508 compliance for federal procurement
+
+### 3.2 Accessibility Checklist
+
+```
+CRITICAL (WCAG 2.2 AA):
+□ All touch targets ≥24×24px (ideally 44×44px)
+□ Color contrast ratio ≥4.5:1 for normal text
+□ Color contrast ratio ≥3:1 for large text (18px+)
+□ Focus indicators visible on all interactive elements
+□ Skip navigation links present
+□ All images have meaningful alt text
+□ Forms have proper labels and error messages
+□ No content flashes more than 3 times/second
+□ Keyboard navigation for all functionality
+□ Screen reader compatible (semantic HTML)
+
+ENHANCED:
+□ prefers-reduced-motion respected
+□ prefers-color-scheme respected (dark mode)
+□ High contrast mode supported
+□ Text resizable to 200% without loss of functionality
+```
+
+### 3.3 Trust Signals for Government
+
+| Signal | Placement | Priority |
+|--------|-----------|----------|
+| FedRAMP Ready | Hero section | P0 |
+| Section 508 Compliant | Footer + Trust section | P0 |
+| SOC 2 Type II | Trust section | P1 |
+| ITAR/EAR Compliant | Trust section | P1 |
+| VPAT Available | Footer link | P1 |
+
+---
+
+## Part 4: Mobile-First Component Specifications
+
+### 4.1 Mobile Navigation (Critical Gap)
+
+**Current:** Links disappear on mobile with no fallback
+**Required:** Sheet-based slide-out menu
 
 ```tsx
-// Navigation Structure
-<nav className="fixed top-0 w-full z-50">
-  {/* Subtle glass effect - reduced from heavy blur */}
-  <div className="bg-white/80 backdrop-blur-md border-b border-slate-200/50">
+// Mobile Navigation Pattern (2026 Best Practice)
+<header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm">
+  <div className="flex items-center justify-between h-14 px-4">
+    <Logo size="sm" />
 
-    {/* Desktop: Clean horizontal layout */}
-    <div className="hidden md:flex items-center justify-between">
-      <Logo />
+    {/* Desktop: Inline navigation */}
+    <nav className="hidden md:flex items-center gap-6">
       <NavLinks />
       <CTAButton />
-    </div>
+    </nav>
 
-    {/* Mobile: Sheet menu trigger */}
-    <div className="md:hidden flex items-center justify-between">
-      <Logo />
-      <MobileMenuTrigger /> {/* NEW: Opens Sheet component */}
-    </div>
+    {/* Mobile: Sheet trigger */}
+    <Sheet>
+      <SheetTrigger asChild className="md:hidden">
+        <Button variant="ghost" size="icon" className="h-11 w-11"> {/* 44px touch target */}
+          <Menu className="h-5 w-5" />
+          <span className="sr-only">Open menu</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="right" className="w-[280px]">
+        <MobileNavContent />
+      </SheetContent>
+    </Sheet>
   </div>
-</nav>
+</header>
 ```
 
-**Specific Changes:**
-- [ ] Add mobile navigation using Sheet component
-- [ ] Replace emoji badges with Lucide icons or remove entirely
-- [ ] Reduce backdrop blur intensity (from `blur-sm` to `blur-[2px]`)
-- [ ] Add subtle shadow on scroll instead of static border
+### 4.2 Sticky Mobile CTA
 
----
+Studies show sticky CTAs can increase conversions by 5%+ with proper implementation ([Source](https://growthrock.co/sticky-add-to-cart-button-example/))
 
-### 3.2 Hero Section
-
-**Current Issues:**
-- Gradient text is cliché
-- 8xl font size is excessive
-- Mock chat UI takes too much space
-- No real product presence
-- Agency names without logos lack authority
-
-**2026 Design:**
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  [Logo]                              [Nav Links]    [CTA]   │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│   ┌─────────────────────┐    ┌──────────────────────────┐  │
-│   │  EYEBROW BADGE      │    │                          │  │
-│   │                     │    │   [Real Product          │  │
-│   │  Total Acquisition  │    │    Screenshot or         │  │
-│   │  Command            │    │    Demo Video]           │  │
-│   │                     │    │                          │  │
-│   │  Subhead copy that  │    │                          │  │
-│   │  explains value     │    │                          │  │
-│   │                     │    │                          │  │
-│   │  [Primary CTA]      │    └──────────────────────────┘  │
-│   │  [Secondary Link]   │                                   │
-│   │                     │                                   │
-│   │  ┌────┐ ┌────┐      │    Trusted by:                   │
-│   │  │DOD │ │GSA │ ...  │    [Agency Logos - not text]     │
-│   │  └────┘ └────┘      │                                   │
-│   └─────────────────────┘                                   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+```tsx
+// Sticky CTA Pattern
+<div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-sm border-t md:hidden z-40">
+  <Button className="w-full h-12 text-base font-semibold">
+    Start Free Trial
+  </Button>
+  {/* Optional dismiss for returning visitors */}
+  <button
+    className="absolute top-2 right-2 p-2"
+    aria-label="Dismiss"
+  >
+    <X className="h-4 w-4" />
+  </button>
+</div>
 ```
 
-**Specific Changes:**
-
-1. **Typography Overhaul**
-   ```css
-   /* OLD */
-   .hero-title {
-     @apply text-5xl sm:text-7xl lg:text-8xl;
-     @apply text-transparent bg-clip-text bg-gradient-to-r from-federal-navy to-blue-600;
-   }
-
-   /* NEW */
-   .hero-title {
-     @apply text-4xl sm:text-5xl lg:text-6xl; /* More restrained */
-     @apply text-slate-900; /* Solid color */
-     @apply font-semibold tracking-tight; /* Refined weight */
-   }
-
-   .hero-title-accent {
-     @apply text-federal-navy; /* Simple accent, no gradient */
-   }
-   ```
-
-2. **Remove Mock Chat UI**
-   - Replace 600px mockup with actual product screenshot
-   - Add subtle border-radius and shadow for "window" effect
-   - Consider looping video demo (15-30 seconds)
-
-3. **Agency Logos**
-   - Source or create minimal agency wordmarks
-   - Display as grayscale with color on hover
-   - Fallback: Keep text but style as proper badges
-
-4. **Simplify Animations**
-   ```tsx
-   // OLD: Complex staggered entrance
-   <motion.div
-     initial={{ opacity: 0, y: 20 }}
-     animate={{ opacity: 1, y: 0 }}
-     transition={{ duration: 0.5, delay: 0.1 }}
-   >
-
-   // NEW: Single entrance, CSS-based
-   <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-   ```
-
----
-
-### 3.3 Trust/Compliance Section
-
-**Current Issues:**
-- Glassmorphism cards are dated
-- Too many pulsing animations
-- Color-coded icons feel formulaic
-
-**2026 Design:**
+### 4.3 Hero Section (Mobile-First)
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                                                             │
-│     Why Federal Teams Trust FARchat                         │
-│                                                             │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │  [Shield Icon]                                          │ │
-│  │                                                         │ │
-│  │  FedRAMP Ready                                          │ │
-│  │  Built on FedRAMP-authorized infrastructure.            │ │
-│  │  Your data stays sovereign.                             │ │
-│  │                                                         │ │
-│  │  ───────────────────────────────────────────────────── │ │
-│  │  [Status indicators without animation]                  │ │
-│  └────────────────────────────────────────────────────────┘ │
-│                                                             │
-│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐   │
-│  │ ITAR/EAR      │  │ Section 508   │  │ SOC 2 Type II │   │
-│  │ Compliant     │  │ Accessible    │  │ Certified     │   │
-│  └───────────────┘  └───────────────┘  └───────────────┘   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+MOBILE (320-428px):                DESKTOP (1280px+):
+┌─────────────────────┐            ┌──────────────────────────────────────┐
+│     [LOGO]     [≡]  │            │ [LOGO]  Nav Nav Nav  [CTA Button]   │
+├─────────────────────┤            ├──────────────────────────────────────┤
+│                     │            │                                      │
+│  Currently in Alpha │            │   [Text Content]    [Product Shot]   │
+│                     │            │                                      │
+│  Total Acquisition  │            │   Total Acquisition                  │
+│  Command            │            │   Command                            │
+│                     │            │                                      │
+│  Subheading text    │            │   Longer subheading with more        │
+│  kept short         │            │   detail for larger screens          │
+│                     │            │                                      │
+│  [Primary CTA]      │            │   [Primary CTA]  [Secondary]         │
+│  Secondary link     │            │                                      │
+│                     │            │   Trusted by: [Logos]                │
+├─────────────────────┤            │                                      │
+│  [Product Shot]     │            └──────────────────────────────────────┘
+│  (full width)       │
+│                     │
+├─────────────────────┤
+│ Trusted by:         │
+│ DOD GSA VA DHS      │
+└─────────────────────┘
+│  [STICKY CTA]       │
+└─────────────────────┘
 ```
 
-**Specific Changes:**
+### 4.4 Button Sizing Standards
 
-1. **Card Redesign**
-   ```css
-   /* OLD: Glassmorphic mess */
-   .trust-card {
-     @apply bg-gradient-to-br from-blue-900/40 to-slate-800/50;
-     @apply backdrop-blur-md;
-     @apply border border-white/10;
-   }
-
-   /* NEW: Solid with elevation */
-   .trust-card {
-     @apply bg-slate-800; /* Solid background */
-     @apply border border-slate-700;
-     @apply shadow-lg shadow-black/20;
-     @apply hover:shadow-xl hover:-translate-y-0.5;
-     @apply transition-all duration-200;
-   }
-   ```
-
-2. **Remove Pulsing Animations**
-   - Status indicators become static colored dots
-   - "Active" states shown via text, not animation
-
-3. **Unified Icon Treatment**
-   - All icons same color (slate-400 or brand blue)
-   - Remove color-coding (green, amber, purple)
-   - Consistent sizing (w-5 h-5)
-
----
-
-### 3.4 Features Section
-
-**Current Issues:**
-- Bento grid is overused industry-wide
-- Stat cards feel like a template
-- NetworkVisualization is heavy (lazy loaded but still large)
-
-**2026 Design Options:**
-
-**Option A: Scroll-Driven Storytelling**
-Instead of bento grid, use full-width sections that reveal on scroll:
-
-```
-[Section 1: Regulatory Graph]
-Full-width visualization with text overlay
-Scroll to reveal next section
-
-[Section 2: Compliance Automation]
-Split layout: description left, visual right
-Animated metrics appear on scroll-into-view
-
-[Section 3: Speed & Accuracy]
-Numbers animate up when visible
-Minimal, focused presentation
-```
-
-**Option B: Two-Column Feature Layout**
-Classic, proven pattern that doesn't feel templated:
-
-```
-┌────────────────────────────────────────────────────────┐
-│  [Visual/Screenshot]  │  Feature Title                 │
-│                       │  Description paragraph         │
-│                       │  • Bullet point                │
-│                       │  • Bullet point                │
-│                       │  [Learn more →]                │
-├────────────────────────────────────────────────────────┤
-│  Feature Title        │  [Visual/Screenshot]           │
-│  Description          │                                │
-│  ...                  │                                │
-└────────────────────────────────────────────────────────┘
-```
-
-**Specific Changes:**
-
-1. **Replace Bento Grid**
-   - Choose Option A (scroll-driven) or Option B (alternating)
-   - Avoid 3-column grid that looks like Vercel/Linear
-
-2. **Rethink Statistics Display**
-   ```tsx
-   // OLD: Giant numbers
-   <h3 className="text-4xl font-bold">85%</h3>
-   <p className="text-sm uppercase">Time Reduction</p>
-
-   // NEW: Integrated metrics
-   <p className="text-lg">
-     Reduce research time by <strong className="text-2xl">85%</strong>
-   </p>
-   ```
-
-3. **Optimize NetworkVisualization**
-   - Consider replacing with static SVG illustration
-   - If keeping, simplify to reduce bundle size
-   - Add proper loading skeleton
-
----
-
-### 3.5 CTA Section (Get Started)
-
-**Current Issues:**
-- Dot pattern at 0.02% opacity is invisible
-- Feels rushed compared to other sections
-- Generic trust indicators
-
-**2026 Design:**
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                                                             │
-│     Ready to transform your acquisition workflow?          │
-│                                                             │
-│     Get started in minutes. No credit card required.       │
-│                                                             │
-│               [Start Free Trial]                            │
-│               [Schedule Demo]                               │
-│                                                             │
-│     ─────────────────────────────────────────────────────  │
-│                                                             │
-│     "FARchat saved our team 20 hours per week on           │
-│      regulatory research."                                  │
-│                                                             │
-│     — Jane Smith, Contracting Officer, GSA                 │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Specific Changes:**
-- [ ] Add testimonial quote (social proof)
-- [ ] Remove or strengthen dot pattern (currently invisible)
-- [ ] Add trust badges below CTA (SOC 2, ITAR, etc.)
-- [ ] Consider adding FAQ accordion
-
----
-
-### 3.6 Footer
-
-**Current Issues:**
-- Too minimal for enterprise product
-- Emoji in copyright (🇺🇸)
-- Button elements used for links (semantic HTML issue)
-
-**2026 Design:**
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                                                             │
-│  FARchat              Product         Resources    Company  │
-│                       Features        Documentation About   │
-│  AI-powered           Pricing         API Docs      Careers │
-│  regulatory           Security        Blog          Contact │
-│  intelligence         Compliance      Support               │
-│                                                             │
-│  ─────────────────────────────────────────────────────────  │
-│                                                             │
-│  © 2025 FARchat. All rights reserved.                      │
-│  Built in the USA for federal compliance.                   │
-│                                                             │
-│  [Privacy] [Terms] [Security] [Status]                     │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Specific Changes:**
-- [ ] Expand to 4-column layout with proper navigation
-- [ ] Remove emoji, replace with text or proper icon
-- [ ] Fix semantic HTML (use `<a>` not `<button>`)
-- [ ] Add system status link
-
----
-
-## Part 4: Motion & Animation Strategy
-
-### Current State
-- Framer Motion adds ~45kb to bundle
-- Basic fade/slide patterns throughout
-- Inconsistent timing (0.3s, 0.5s, 0.8s mixed)
-- Over-animated decorative elements
-
-### 2026 Strategy
-
-#### Use CSS Animations First
 ```css
-/* Tailwind animate-in utilities */
-.animate-in { animation-duration: 150ms; }
-.fade-in { --tw-enter-opacity: 0; }
-.slide-in-from-bottom-4 { --tw-enter-translate-y: 1rem; }
-```
+/* Mobile-First Button Sizes */
+.btn-primary {
+  @apply h-12 px-6 text-base;  /* 48px height - meets Material Design */
+  @apply min-w-[120px];        /* Adequate touch target width */
+}
 
-#### Reserve Framer Motion For
-- Complex gesture interactions
-- Layout animations (AnimatePresence)
-- Scroll-linked effects (useScroll, useTransform)
+.btn-secondary {
+  @apply h-11 px-5 text-sm;    /* 44px height - meets WCAG AAA */
+}
 
-#### Timing System
-```ts
-// lib/animations.ts - already created
-export const duration = {
-  fast: 0.15,   // Micro-interactions
-  normal: 0.3,  // Standard transitions
-  slow: 0.5,    // Page-level animations
+.btn-icon {
+  @apply h-11 w-11;            /* 44px square - meets all standards */
+}
+
+/* Desktop can use smaller targets */
+@screen md {
+  .btn-primary {
+    @apply h-10 px-5;          /* Can reduce on desktop */
+  }
 }
 ```
 
-#### Reduce Animation Count
-- Remove entrance animations from decorative elements
-- Keep entrance animations only for hero and first fold
-- Use `prefers-reduced-motion` to disable all optional motion
+---
+
+## Part 5: Performance Requirements
+
+### 5.1 Core Web Vitals Targets
+
+| Metric | Current | Target | Why |
+|--------|---------|--------|-----|
+| LCP (Largest Contentful Paint) | ~2.5s | <1.8s | Google ranking factor |
+| FID (First Input Delay) | ~100ms | <100ms | Interactivity |
+| CLS (Cumulative Layout Shift) | ~0.1 | <0.05 | Visual stability |
+| FCP (First Contentful Paint) | ~1.8s | <1.2s | Perceived speed |
+| TTI (Time to Interactive) | ~3s | <2s | Usability |
+
+### 5.2 Performance-First Visual Strategy
+
+| Element | Current | 2026 Approach |
+|---------|---------|---------------|
+| Hero background | 494KB PNG | WebP <100KB with blur placeholder |
+| Product mockup | 600px fake UI | Real screenshot, WebP, lazy-loaded |
+| NetworkVisualization | Heavy SVG animation | Static SVG or Lottie, lazy-loaded |
+| Icons | Lucide (tree-shaken) | Keep - already optimized |
+| Video (if any) | N/A | WebM/MP4 <2MB, poster image, lazy |
+
+### 5.3 Image Optimization Rules
+
+```tsx
+// Next.js Image best practices
+<Image
+  src="/product-screenshot.webp"
+  alt="FARchat interface showing regulatory search"
+  width={1200}
+  height={800}
+  sizes="(max-width: 768px) 100vw, 50vw"
+  placeholder="blur"
+  blurDataURL="data:image/jpeg;base64,..."
+  priority={isAboveFold}
+  loading={isAboveFold ? undefined : "lazy"}
+/>
+```
 
 ---
 
-## Part 5: Color & Typography Refinements
+## Part 6: Dark Mode Requirements
 
-### Color Palette Updates
+### 6.1 Implementation Strategy
 
-**Current Palette:** Strong foundation with federal navy
-
-**Additions for 2026:**
+Dark mode is no longer optional in 2026. High-contrast themes improve accessibility and user preference. ([Source](https://www.involve.me/blog/landing-page-design-trends))
 
 ```css
+/* globals.css */
 :root {
-  /* Existing */
-  --federal-navy: #1B263B;
-  --professional-blue: #2E5266;
+  --background: 0 0% 100%;        /* White */
+  --foreground: 216 37% 17%;      /* Federal Navy */
+  --card: 0 0% 100%;
+  --primary: 216 37% 17%;         /* Federal Navy */
+  --primary-foreground: 0 0% 100%;
+}
 
-  /* NEW: Warm accent for CTAs */
-  --accent-amber: #F59E0B;
-  --accent-amber-hover: #D97706;
+.dark {
+  --background: 216 37% 10%;      /* Dark Federal Navy */
+  --foreground: 210 40% 98%;      /* Near white */
+  --card: 216 37% 14%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 216 37% 10%;
+}
 
-  /* NEW: Success/positive states */
-  --success-green: #10B981;
-
-  /* NEW: Refined grays */
-  --gray-warm-50: #FAFAF9;
-  --gray-warm-100: #F5F5F4;
+/* Respect system preference */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    /* Apply dark mode variables */
+  }
 }
 ```
 
-**Rationale:** Blue-heavy palette lacks warmth. Amber accent creates better CTA contrast without departing from professional aesthetic.
+### 6.2 Theme Toggle Component
 
-### Typography Scale
+```tsx
+// components/ui/theme-toggle.tsx
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
 
-**Current:** Aggressive scaling (5xl → 8xl)
-
-**2026 Refined:**
-```css
-/* Display (Hero) */
-.text-display { @apply text-4xl sm:text-5xl lg:text-6xl; }
-
-/* Heading 1 */
-.text-h1 { @apply text-3xl sm:text-4xl; }
-
-/* Heading 2 */
-.text-h2 { @apply text-2xl sm:text-3xl; }
-
-/* Body Large */
-.text-body-lg { @apply text-lg sm:text-xl; }
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className="h-11 w-11" // 44px touch target
+      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+    >
+      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+    </Button>
+  )
+}
 ```
 
 ---
 
-## Part 6: Asset Requirements
+## Part 7: Component Patterns (2026)
 
-### New Assets Needed
+### 7.1 Glassmorphism (Evolved, Not Dead)
 
-| Asset | Purpose | Specs |
-|-------|---------|-------|
-| Product screenshot (chat) | Hero section | 1200x800, WebP, <100kb |
-| Product screenshot (search) | Features section | 1200x800, WebP, <100kb |
-| Demo video | Hero section | 15-30s loop, WebM + MP4, <2MB |
-| Agency logos (7) | Trust indicators | SVG, monochrome |
-| Team photos (optional) | About page | 400x400, WebP |
-| Illustration set | Features/empty states | SVG, brand colors |
+Use sparingly for depth and layering, not decoration:
 
-### Image Optimization Rules
+```css
+/* 2026 Glassmorphism - Restrained & Functional */
+.glass-card {
+  @apply bg-white/80 dark:bg-slate-900/80;
+  @apply backdrop-blur-md;
+  @apply border border-slate-200/50 dark:border-slate-700/50;
+  @apply shadow-lg shadow-black/5;
+  /* NO heavy gradients */
+  /* NO excessive blur */
+  /* NO multiple stacked glass layers */
+}
 
-1. All images in WebP with PNG fallback
-2. Responsive sizes via `srcset`
-3. Blur placeholder for LCP images
-4. Maximum 100kb per image (except video)
+/* Use for: Sticky headers, overlays, modals */
+/* Avoid for: Regular content cards */
+```
+
+### 7.2 Bento Grid (Refined, Not Replaced)
+
+Bento grids remain valid when executed distinctively:
+
+```tsx
+// Distinctive bento - avoid generic template look
+<div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+  {/* Large feature - spans 4 cols on desktop */}
+  <Card className="md:col-span-4 md:row-span-2">
+    <FeatureHighlight />
+  </Card>
+
+  {/* Stat cards - 2 cols each */}
+  <Card className="md:col-span-2">
+    <StatCard value="85%" label="Time Saved" />
+  </Card>
+  <Card className="md:col-span-2">
+    <StatCard value="25+" label="Regulations" />
+  </Card>
+</div>
+```
+
+### 7.3 Trust Section (Non-Animated)
+
+```tsx
+// Static trust indicators - no pulsing
+<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+  {[
+    { icon: Shield, label: "FedRAMP Ready" },
+    { icon: Lock, label: "SOC 2 Type II" },
+    { icon: Eye, label: "Section 508" },
+    { icon: FileCheck, label: "ITAR Compliant" },
+  ].map((item) => (
+    <div
+      key={item.label}
+      className="flex items-center gap-3 p-4 rounded-lg bg-muted/50"
+    >
+      <item.icon className="h-5 w-5 text-federal-navy" />
+      <span className="text-sm font-medium">{item.label}</span>
+    </div>
+  ))}
+</div>
+```
 
 ---
 
-## Part 7: Implementation Roadmap
+## Part 8: Implementation Roadmap (Mobile-First)
 
-### Phase 1: Critical Fixes (Week 1)
-- [ ] Add mobile navigation (Sheet component)
-- [ ] Remove all emoji from UI
-- [ ] Fix semantic HTML issues (buttons → links)
-- [ ] Reduce hero font size
-- [ ] Replace gradient text with solid color
+### Phase 1: Mobile Foundation (Week 1)
+- [ ] Add Sheet-based mobile navigation
+- [ ] Implement sticky mobile CTA
+- [ ] Ensure all touch targets ≥44px
+- [ ] Add dark mode support with system preference detection
+- [ ] Test on actual mobile devices (not just DevTools)
 
-### Phase 2: Visual Refresh (Week 2-3)
-- [ ] Redesign trust section cards (remove glassmorphism)
-- [ ] Remove pulsing/pinging animations
-- [ ] Update hover states (shadow elevation, not scale)
-- [ ] Implement new color accents
-- [ ] Add warm amber CTA color
+### Phase 2: Accessibility Compliance (Week 1-2)
+- [ ] Audit all color contrast ratios
+- [ ] Add skip navigation links
+- [ ] Ensure keyboard navigation works
+- [ ] Test with VoiceOver/NVDA
+- [ ] Add prefers-reduced-motion support
+- [ ] Generate initial VPAT documentation
 
-### Phase 3: Content Enhancement (Week 3-4)
+### Phase 3: Performance Optimization (Week 2)
+- [ ] Convert images to WebP with proper srcset
+- [ ] Implement blur placeholders for LCP images
+- [ ] Lazy load below-fold content
+- [ ] Optimize NetworkVisualization (static or Lottie)
+- [ ] Achieve Core Web Vitals targets
+
+### Phase 4: Visual Refinement (Week 2-3)
+- [ ] Reduce hero typography scale (8xl → 6xl)
+- [ ] Replace gradient text with solid federal-navy
+- [ ] Update glassmorphism to restrained style
+- [ ] Remove pulsing animations
+- [ ] Implement elevation-based hover states
+
+### Phase 5: Content & Trust (Week 3-4)
 - [ ] Add real product screenshots
-- [ ] Create or source agency logos
+- [ ] Source/create agency logos
 - [ ] Write testimonial content
-- [ ] Expand footer with proper navigation
-- [ ] Add FAQ section
+- [ ] Expand footer navigation
+- [ ] Add FAQ section with accordion
 
-### Phase 4: Motion & Polish (Week 4-5)
-- [ ] Migrate simple animations to CSS
-- [ ] Reduce Framer Motion usage
-- [ ] Implement scroll-triggered reveals
-- [ ] Add micro-interactions to forms/buttons
-- [ ] Test reduced motion preference
-
-### Phase 5: Features Redesign (Week 5-6)
-- [ ] Replace bento grid with new layout
-- [ ] Rethink statistics presentation
-- [ ] Optimize or replace NetworkVisualization
-- [ ] Add loading skeletons for dynamic content
+### Phase 6: Polish & Testing (Week 4-5)
+- [ ] Cross-browser testing (Safari, Firefox, Chrome, Edge)
+- [ ] Device testing (iOS Safari, Android Chrome)
+- [ ] Accessibility audit (automated + manual)
+- [ ] Performance audit (Lighthouse, WebPageTest)
+- [ ] User testing with federal contracting professionals
 
 ---
 
-## Part 8: Success Metrics
+## Part 9: Success Metrics
 
-### Design Quality Metrics
-| Metric | Current | Target |
-|--------|---------|--------|
-| Lighthouse Performance | ~75 | 95+ |
-| First Contentful Paint | ~1.8s | <1.2s |
-| Largest Contentful Paint | ~2.5s | <1.8s |
-| Cumulative Layout Shift | ~0.1 | <0.05 |
+### Core Web Vitals (Mobile)
 
-### User Experience Metrics
-| Metric | Current | Target |
-|--------|---------|--------|
-| Mobile usability score | 70 | 95+ |
-| Accessibility score | 90 | 100 |
-| Time to interactive | ~3s | <2s |
+| Metric | Current | Target | Tool |
+|--------|---------|--------|------|
+| LCP | ~2.5s | <1.8s | Lighthouse |
+| FID | ~100ms | <100ms | Lighthouse |
+| CLS | ~0.1 | <0.05 | Lighthouse |
+| Mobile Score | ~70 | 95+ | PageSpeed Insights |
 
-### Business Metrics
+### Accessibility
+
+| Metric | Current | Target | Tool |
+|--------|---------|--------|------|
+| WCAG 2.2 AA | Partial | 100% | axe, WAVE |
+| Accessibility Score | ~90 | 100 | Lighthouse |
+| Keyboard Nav | Partial | 100% | Manual testing |
+| Screen Reader | Untested | Pass | VoiceOver/NVDA |
+
+### Business Outcomes
+
 | Metric | Baseline | Goal |
 |--------|----------|------|
-| Bounce rate | TBD | -20% |
-| CTA click rate | TBD | +30% |
+| Mobile bounce rate | TBD | -30% |
+| Mobile conversion | TBD | +40% |
 | Demo requests | TBD | +50% |
+| VPAT requests | 0 | Track |
 
 ---
 
-## Part 9: Design System Additions
+## Part 10: Reference & Sources
 
-### New Components Needed
+### Design Trend Sources (December 2025)
+- [Mobile-First Design Principles 2025](https://www.brandvm.com/post/mobile-first-design-principles-2025) - Brand Vision
+- [Mobile App UI/UX Design Trends 2026](https://www.letsgroto.com/blog/mobile-app-ui-ux-design-trends-2026-the-only-guide-you-ll-need) - Groto
+- [Landing Page Design Trends 2025](https://www.outbrain.com/blog/landing-page-design-trends/) - Outbrain
+- [Landing Page Design Trends 2026](https://www.involve.me/blog/landing-page-design-trends) - Involve.me
+- [Glassmorphism 2026](https://medium.com/design-bootcamp/ui-design-trend-2026-2-glassmorphism-and-liquid-design-make-a-comeback-50edb60ca81e) - Medium
 
-```
-components/
-├── ui/
-│   ├── mobile-nav.tsx       # Sheet-based mobile menu
-│   ├── testimonial-card.tsx # Social proof component
-│   ├── stat-inline.tsx      # Inline statistics
-│   └── video-player.tsx     # Hero video component
-├── sections/
-│   ├── testimonials.tsx     # New section
-│   └── faq.tsx              # New section
-```
+### Accessibility Standards
+- [WCAG 2.2 Touch Targets](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum) - W3C
+- [Touch Target Best Practices](https://accessibility.digital.gov/ux/touch-targets/) - Digital.gov
+- [WCAG 2.2 for SaaS & Government](https://www.aufaitux.com/blog/wcag-2-2-compliance-saas-government-platforms/) - AufaitUX
 
-### Component Patterns to Avoid
-
-1. **No more glassmorphism** — Use solid backgrounds
-2. **No scale transforms** — Use elevation changes
-3. **No gradient text** — Use solid colors
-4. **No emoji** — Use icons or nothing
-5. **No bento grids** — Use unique layouts
-
----
-
-## Part 10: Competitive Positioning
-
-### Current Competitive Set
-- **Linear:** Clean, minimal, monochrome
-- **Vercel:** Dark mode, bento grids, animations
-- **Notion:** Playful, illustration-heavy
-- **Bloomberg:** Dense, functional, data-focused
-
-### FARchat Target Position
-**"Government-grade precision with modern clarity"**
-
-- More serious than Notion (no playfulness)
-- More approachable than Bloomberg (not dense)
-- More distinctive than Vercel (no templates)
-- Similar to Linear in cleanliness
-
-### Visual Differentiators
-1. **Federal Navy** as primary color (unique in market)
-2. **Regulatory context** in all visuals (citations, compliance badges)
-3. **Authority signals** (agency logos, security certifications)
-4. **Minimal but warm** (not cold/tech-bro aesthetic)
-
----
-
-## Appendix A: Reference Sites
-
-### For Inspiration
-- [Linear.app](https://linear.app) — Clean, purposeful animations
-- [Loom.com](https://loom.com) — Product-first hero
-- [Clerk.com](https://clerk.com) — Enterprise trust signals
-- [Raycast.com](https://raycast.com) — Distinctive visual identity
-
-### To Avoid Copying
-- [Vercel.com](https://vercel.com) — Bento grid overused
-- [Stripe.com](https://stripe.com) — Gradient animations overdone
-- Generic Framer templates
-
----
-
-## Appendix B: Technical Constraints
-
-1. **Next.js 16** — App Router, Server Components
-2. **Tailwind CSS 4** — oklch colors, new utilities
-3. **Framer Motion** — Already installed, minimize usage
-4. **Radix UI** — Primitives for accessibility
-5. **Lucide Icons** — Icon library in use
+### Mobile CTA Research
+- [Sticky CTA A/B Test Results](https://growthrock.co/sticky-add-to-cart-button-example/) - GrowthRock
+- [CTA Button Best Practices 2025](https://www.designstudiouiux.com/blog/cta-button-design-best-practices/) - DesignStudio
+- [Mobile CTA Placement](https://uxmovement.com/mobile/optimal-placement-for-mobile-call-to-action-buttons/) - UX Movement
 
 ---
 
@@ -678,7 +536,8 @@ components/
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0 | Dec 2024 | Initial design audit and plan |
+| 1.0 | 24 Dec 2025 | Initial design audit and plan |
+| 2.0 | 26 Dec 2025 | Mobile-first rewrite, 2025-2026 trend research, accessibility requirements, corrected glassmorphism/bento stance |
 
 ---
 
