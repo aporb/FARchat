@@ -11,11 +11,9 @@
   }
 }
 
-@custom-variant dark (&:is(.dark *));
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@custom-variant dark (&:is(.dark *));
 
 /* ============================================
    BASE LAYER - Core Variables & Reset
@@ -536,6 +534,8 @@
 
     /* Remove scale hovers - these are dated */
     .no-scale-hover {
-        @apply hover:scale-100 !important;
+        &:hover {
+            scale: 1 !important;
+        }
     }
 }
