@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import { motion, AnimatePresence } from 'framer-motion'
-import { User, Settings, LogOut, LogIn, ChevronDown, Zap, Loader2 } from 'lucide-react'
+import { User, Settings, LogOut, LogIn, ChevronDown, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { dropdownTransition } from '@/lib/animations'
 import { Button } from '@/components/ui/button'
@@ -14,7 +14,8 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { UsageDashboard } from './UsageDashboard'
-import { signOut } from '@/app/actions'
+import { TierBadge, type Tier } from '@/components/shared/TierBadge'
+import { signOut, getUserUsage } from '@/app/actions'
 import { createSupabaseClient } from '@/lib/supabase'
 import { toast } from 'sonner'
 
@@ -51,6 +52,7 @@ export function UserMenu({ className }: UserMenuProps) {
     const [showDropdown, setShowDropdown] = useState(false)
     const [showSettings, setShowSettings] = useState(false)
     const [showAuthModal, setShowAuthModal] = useState(false)
+    const [userTier, setUserTier] = useState<Tier>('free')
 
     useEffect(() => {
         async function fetchUser() {
@@ -58,6 +60,23 @@ export function UserMenu({ className }: UserMenuProps) {
             const { data: { user } } = await supabase.auth.getUser()
             if (user) {
                 setUser({ email: user.email ?? null, id: user.id })
+                // Fetch user's tier from usage data
+                try {
+                    const usageData = await getUserUsage()
+                    if (usageData?.tier) {
+                        // Map tier string to Tier type (free, pro, enterprise)
+                        const tierMapping: Record<string, Tier> = {
+                            'free': 'free',
+                            'basic': 'pro',
+                            'pro': 'pro',
+                            'unlimited': 'enterprise',
+                            'enterprise': 'enterprise'
+                        }
+                        setUserTier(tierMapping[usageData.tier] || 'free')
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch user tier:', error)
+                }
             }
             setLoading(false)
         }
@@ -71,6 +90,7 @@ export function UserMenu({ className }: UserMenuProps) {
                 setShowAuthModal(false)
             } else if (event === 'SIGNED_OUT') {
                 setUser(null)
+                setUserTier('free')
             }
         })
 
@@ -162,10 +182,9 @@ export function UserMenu({ className }: UserMenuProps) {
                                             <p className="text-sm font-medium truncate">
                                                 {user?.email || 'User'}
                                             </p>
-                                            <p className="text-xs text-muted-foreground flex items-center gap-1">
-                                                <Zap className="w-3 h-3 text-amber-500" />
-                                                Active
-                                            </p>
+                                            <div className="mt-1">
+                                                <TierBadge tier={userTier} size="sm" showIcon={true} />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

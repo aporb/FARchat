@@ -45,12 +45,64 @@ interface UserData {
     id: string
 }
 
+const PREFERENCES_KEY = 'farchat-preferences'
+
+interface UserPreferences {
+    isDarkMode: boolean
+    notificationsEnabled: boolean
+    citationsExpanded: boolean
+}
+
+const DEFAULT_PREFERENCES: UserPreferences = {
+    isDarkMode: false,
+    notificationsEnabled: true,
+    citationsExpanded: true,
+}
+
 export function SettingsSidebar({ open, onOpenChange }: SettingsSidebarProps) {
     const [user, setUser] = useState<UserData | null>(null)
     const [loading, setLoading] = useState(true)
-    const [isDarkMode, setIsDarkMode] = useState(false)
-    const [notificationsEnabled, setNotificationsEnabled] = useState(true)
-    const [citationsExpanded, setCitationsExpanded] = useState(true)
+    const [isDarkMode, setIsDarkMode] = useState(DEFAULT_PREFERENCES.isDarkMode)
+    const [notificationsEnabled, setNotificationsEnabled] = useState(DEFAULT_PREFERENCES.notificationsEnabled)
+    const [citationsExpanded, setCitationsExpanded] = useState(DEFAULT_PREFERENCES.citationsExpanded)
+    const [prefsLoaded, setPrefsLoaded] = useState(false)
+
+    // Load preferences from localStorage on mount
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem(PREFERENCES_KEY)
+            if (saved) {
+                const prefs: UserPreferences = JSON.parse(saved)
+                setIsDarkMode(prefs.isDarkMode ?? DEFAULT_PREFERENCES.isDarkMode)
+                setNotificationsEnabled(prefs.notificationsEnabled ?? DEFAULT_PREFERENCES.notificationsEnabled)
+                setCitationsExpanded(prefs.citationsExpanded ?? DEFAULT_PREFERENCES.citationsExpanded)
+
+                // Apply dark mode from saved preference
+                if (prefs.isDarkMode) {
+                    document.documentElement.classList.add('dark')
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load preferences:', error)
+        }
+        setPrefsLoaded(true)
+    }, [])
+
+    // Save preferences to localStorage when they change
+    useEffect(() => {
+        if (!prefsLoaded) return // Don't save until we've loaded
+
+        try {
+            const prefs: UserPreferences = {
+                isDarkMode,
+                notificationsEnabled,
+                citationsExpanded,
+            }
+            localStorage.setItem(PREFERENCES_KEY, JSON.stringify(prefs))
+        } catch (error) {
+            console.error('Failed to save preferences:', error)
+        }
+    }, [isDarkMode, notificationsEnabled, citationsExpanded, prefsLoaded])
 
     useEffect(() => {
         async function fetchUser() {

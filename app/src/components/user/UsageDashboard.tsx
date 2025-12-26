@@ -1,14 +1,15 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { TrendingUp, MessageSquare, Calendar, Zap, Crown, AlertCircle } from 'lucide-react'
+import { TrendingUp, MessageSquare, AlertCircle, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Progress } from '@/components/ui/progress'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { getUserUsage } from '@/app/actions'
+import { TierBadge, type Tier } from '@/components/shared/TierBadge'
+import { CountdownTimer } from '@/components/shared/CountdownTimer'
 
 interface UsageData {
     remaining: number
@@ -22,12 +23,25 @@ interface UsageDashboardProps {
     compact?: boolean | undefined
 }
 
-const tierConfig: Record<string, { color: string; icon: React.ReactNode; label: string }> = {
-    free: { color: 'bg-slate-500', icon: null, label: 'Free' },
-    basic: { color: 'bg-blue-500', icon: <Zap className="w-3 h-3" />, label: 'Basic' },
-    pro: { color: 'bg-purple-500', icon: <Crown className="w-3 h-3" />, label: 'Pro' },
-    unlimited: { color: 'bg-amber-500', icon: <Crown className="w-3 h-3" />, label: 'Unlimited' },
-    enterprise: { color: 'bg-emerald-500', icon: <Crown className="w-3 h-3" />, label: 'Enterprise' },
+// Map usage tier to TierBadge tier type
+const tierMapping: Record<string, Tier> = {
+    'free': 'free',
+    'basic': 'pro',
+    'pro': 'pro',
+    'unlimited': 'enterprise',
+    'enterprise': 'enterprise'
+}
+
+// Calculate next midnight UTC
+function getNextMidnightUTC(): Date {
+    const now = new Date()
+    const nextMidnight = new Date(Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate() + 1,
+        0, 0, 0, 0
+    ))
+    return nextMidnight
 }
 
 export function UsageDashboard({ className, compact = false }: UsageDashboardProps) {
@@ -67,8 +81,8 @@ export function UsageDashboard({ className, compact = false }: UsageDashboardPro
     const percentage = usage.limit === Infinity ? 0 : Math.round((used / usage.limit) * 100)
     const isNearLimit = percentage >= 80
     const isAtLimit = !usage.isAllowed
-    const defaultTier = { color: 'bg-slate-500', icon: null, label: 'Free' }
-    const tierInfo = tierConfig[usage.tier] ?? defaultTier
+    const mappedTier = tierMapping[usage.tier] ?? 'free'
+    const nextResetDate = useMemo(() => getNextMidnightUTC(), [])
 
     // Compact version for sidebar
     if (compact) {
@@ -76,14 +90,11 @@ export function UsageDashboard({ className, compact = false }: UsageDashboardPro
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className={cn("space-y-2", className)}
+                className={cn("space-y-3", className)}
             >
                 <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Daily Queries</span>
-                    <Badge variant="outline" className={cn("text-xs", tierInfo.color, "text-white border-0")}>
-                        {tierInfo.icon}
-                        {tierInfo.label}
-                    </Badge>
+                    <TierBadge tier={mappedTier} size="sm" showIcon={true} />
                 </div>
 
                 <Progress
@@ -113,6 +124,24 @@ export function UsageDashboard({ className, compact = false }: UsageDashboardPro
                         </span>
                     )}
                 </div>
+
+                {/* Countdown Timer */}
+                <CountdownTimer
+                    targetDate={nextResetDate}
+                    label="Resets in"
+                    className="text-xs"
+                />
+
+                {/* Upgrade CTA when approaching limit */}
+                {isNearLimit && usage.tier === 'free' && (
+                    <Button
+                        size="sm"
+                        className="w-full min-h-[44px] bg-amber-500 hover:bg-amber-600 text-white"
+                    >
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Upgrade to Pro
+                    </Button>
+                )}
             </motion.div>
         )
     }
@@ -131,10 +160,7 @@ export function UsageDashboard({ className, compact = false }: UsageDashboardPro
                             <TrendingUp className="w-4 h-4 text-primary" />
                             Usage Overview
                         </CardTitle>
-                        <Badge variant="outline" className={cn("text-xs flex items-center gap-1", tierInfo.color, "text-white border-0")}>
-                            {tierInfo.icon}
-                            {tierInfo.label}
-                        </Badge>
+                        <TierBadge tier={mappedTier} size="default" showIcon={true} />
                     </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -167,7 +193,7 @@ export function UsageDashboard({ className, compact = false }: UsageDashboardPro
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
-                                className="flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded-md p-2"
+                                className="flex items-center gap-2 text-sm text-red-600 bg-red-50 dark:bg-red-950/50 dark:text-red-400 rounded-md p-2"
                             >
                                 <AlertCircle className="w-4 h-4 shrink-0" />
                                 <span>Daily limit reached. Resets at midnight UTC.</span>
@@ -178,7 +204,7 @@ export function UsageDashboard({ className, compact = false }: UsageDashboardPro
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
-                                className="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 rounded-md p-2"
+                                className="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 dark:bg-amber-950/50 dark:text-amber-400 rounded-md p-2"
                             >
                                 <AlertCircle className="w-4 h-4 shrink-0" />
                                 <span>Approaching daily limit. {usage.remaining} queries remaining.</span>
@@ -186,15 +212,25 @@ export function UsageDashboard({ className, compact = false }: UsageDashboardPro
                         )}
                     </div>
 
-                    {/* Reset info */}
-                    <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
-                        <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            Resets daily at midnight UTC
-                        </span>
+                    {/* Countdown Timer and Reset info */}
+                    <div className="pt-2 border-t space-y-3">
+                        <CountdownTimer
+                            targetDate={nextResetDate}
+                            label="Resets in"
+                        />
+
+                        {/* Upgrade CTA for free tier */}
                         {usage.tier === 'free' && (
-                            <Button variant="link" size="sm" className="h-auto p-0 text-xs">
-                                Upgrade for more
+                            <Button
+                                className={cn(
+                                    "w-full min-h-[44px]",
+                                    isNearLimit
+                                        ? "bg-amber-500 hover:bg-amber-600 text-white"
+                                        : "bg-primary hover:bg-primary/90"
+                                )}
+                            >
+                                <Sparkles className="w-4 h-4 mr-2" />
+                                {isNearLimit ? 'Upgrade Now for Unlimited Queries' : 'Upgrade to Pro'}
                             </Button>
                         )}
                     </div>
