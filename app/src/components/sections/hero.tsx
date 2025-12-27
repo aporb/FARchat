@@ -186,7 +186,7 @@ export function Hero() {
                                             </div>
 
                                             <p className="text-xs sm:text-sm lg:text-base text-slate-700 dark:text-slate-300 leading-relaxed mb-2 sm:mb-4">
-                                                For drone procurements, **DFARS 252.225-7001** applies, but you must also cross-reference **Section 848 of the NDAA for FY2020**.
+                                                For drone procurements, <strong className="font-semibold">DFARS 252.225-7001</strong> applies, but you must also cross-reference <strong className="font-semibold">Section 848 of the NDAA for FY2020</strong>.
                                             </p>
 
                                             {/* Citation cards - hidden on small mobile, shown on larger screens */}
