@@ -2,6 +2,8 @@ import { Metadata } from "next"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Navigation } from "@/components/layout/navigation"
+import { Footer } from "@/components/sections/footer"
 import {
     AccessibilityIcon,
     CheckIcon,
@@ -47,7 +49,9 @@ const wcagCriteria = [
 
 export default function VPATPage() {
     return (
-        <div className="min-h-screen bg-white dark:bg-slate-950 pt-20 pb-16">
+        <>
+            <Navigation />
+            <div className="min-h-screen bg-white dark:bg-slate-950 pt-20 pb-16">
             {/* Hero Section */}
             <section className="py-12 md:py-20">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
@@ -222,5 +226,7 @@ export default function VPATPage() {
                 </div>
             </section>
         </div>
+            <Footer />
+        </>
     )
 }

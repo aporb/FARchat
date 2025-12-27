@@ -1,5 +1,7 @@
 import { Metadata } from "next"
 import { Badge } from "@/components/ui/badge"
+import { Navigation } from "@/components/layout/navigation"
+import { Footer } from "@/components/sections/footer"
 import {
     SparklesIcon,
     WrenchIcon,
@@ -106,7 +108,9 @@ const changelogEntries: ChangelogEntry[] = [
 
 export default function ChangelogPage() {
     return (
-        <div className="min-h-screen bg-white dark:bg-slate-950 pt-20 pb-16">
+        <>
+            <Navigation />
+            <div className="min-h-screen bg-white dark:bg-slate-950 pt-20 pb-16">
             {/* Hero Section */}
             <section className="py-12 md:py-20">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
@@ -206,5 +210,7 @@ export default function ChangelogPage() {
                 </div>
             </section>
         </div>
+            <Footer />
+        </>
     )
 }

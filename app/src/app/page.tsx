@@ -22,7 +22,21 @@ const GetStarted = dynamic(
 
 const FAQ = dynamic(
   () => import('@/components/sections/faq').then(mod => mod.FAQ),
-  { ssr: true }
+  {
+    ssr: false, // Disable SSR to fix Radix Accordion hydration mismatch
+    loading: () => (
+      <section className="py-20 md:py-32 bg-muted/30 dark:bg-slate-900/50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="h-10 w-64 bg-muted animate-pulse rounded mx-auto mb-4" />
+              <div className="h-6 w-48 bg-muted animate-pulse rounded mx-auto" />
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
 )
 
 const Footer = dynamic(

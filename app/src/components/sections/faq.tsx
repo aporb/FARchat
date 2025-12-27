@@ -37,15 +37,41 @@ const FAQ_ITEMS = [
 
 export function FAQ() {
     return (
-        <section id="faq" className="py-20 md:py-32 bg-muted/30 dark:bg-slate-900/50">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="faq" className="py-12 sm:py-16 md:py-24 lg:py-32 bg-muted/30 dark:bg-slate-900/50 relative overflow-hidden">
+            {/* Subtle geometric network accents */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+                <svg className="absolute top-20 right-10 w-[350px] h-[250px] opacity-[0.015] dark:opacity-[0.03]" viewBox="0 0 350 250">
+                    <g stroke="currentColor" strokeWidth="1" fill="none">
+                        <line x1="50" y1="50" x2="150" y2="100" />
+                        <line x1="150" y1="100" x2="280" y2="70" />
+                        <line x1="100" y1="150" x2="200" y2="180" />
+                    </g>
+                    <g fill="currentColor" opacity="0.4">
+                        <circle cx="150" cy="100" r="3" />
+                        <circle cx="200" cy="180" r="2" />
+                    </g>
+                </svg>
+                <svg className="absolute bottom-20 left-10 w-[300px] h-[200px] opacity-[0.015] dark:opacity-[0.025]" viewBox="0 0 300 200">
+                    <g stroke="currentColor" strokeWidth="1" fill="none">
+                        <line x1="30" y1="80" x2="120" y2="50" />
+                        <line x1="120" y1="50" x2="220" y2="100" />
+                        <line x1="80" y1="140" x2="180" y2="160" />
+                    </g>
+                    <g fill="currentColor" opacity="0.4">
+                        <circle cx="120" cy="50" r="2" />
+                        <circle cx="180" cy="160" r="2" />
+                    </g>
+                </svg>
+            </div>
+
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="max-w-3xl mx-auto">
                     {/* Header */}
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                    <div className="text-center mb-8 sm:mb-12">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 sm:mb-4">
                             Frequently Asked Questions
                         </h2>
-                        <p className="text-lg text-muted-foreground">
+                        <p className="text-base sm:text-lg text-muted-foreground">
                             Everything you need to know about FARchat
                         </p>
                     </div>
@@ -54,10 +80,10 @@ export function FAQ() {
                     <Accordion type="single" collapsible className="w-full">
                         {FAQ_ITEMS.map((item, index) => (
                             <AccordionItem key={index} value={`item-${index}`}>
-                                <AccordionTrigger className="text-left text-base md:text-lg font-medium py-4 min-h-[56px]">
+                                <AccordionTrigger className="text-left text-sm sm:text-base md:text-lg font-medium py-3 sm:py-4 min-h-[48px] sm:min-h-[56px]">
                                     {item.question}
                                 </AccordionTrigger>
-                                <AccordionContent className="text-muted-foreground pb-4">
+                                <AccordionContent className="text-sm sm:text-base text-muted-foreground pb-3 sm:pb-4">
                                     {item.answer}
                                 </AccordionContent>
                             </AccordionItem>

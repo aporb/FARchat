@@ -59,7 +59,7 @@ export function StickyMobileCTA({
         >
             <div className="relative">
                 <Button
-                    className="w-full h-12 text-base font-semibold bg-federal-navy hover:bg-federal-navy/90"
+                    className="w-full h-12 text-base font-semibold bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white"
                     asChild
                 >
                     <Link href={href}>

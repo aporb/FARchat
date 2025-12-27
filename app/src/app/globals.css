@@ -397,10 +397,11 @@
    ============================================ */
 .dark {
   /* === BRAND COLORS (Dark Mode) === */
-  --federal-navy: 216 37% 85%;           /* Inverted for dark */
-  --federal-navy-light: 216 37% 90%;
-  --federal-navy-dark: 216 37% 80%;
-  --federal-navy-foreground: 216 37% 17%;
+  /* Keep federal-navy dark - use explicit dark: variants for light text */
+  --federal-navy: 216 37% 17%;           /* #1B263B - same as light mode */
+  --federal-navy-light: 216 37% 25%;
+  --federal-navy-dark: 216 37% 12%;
+  --federal-navy-foreground: 0 0% 100%;  /* White text on navy */
 
   /* Core colors */
   --background: oklch(0.2046 0 0);

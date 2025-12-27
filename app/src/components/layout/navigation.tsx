@@ -68,7 +68,7 @@ export function Navigation() {
                         </Button>
                         <Button
                             size="sm"
-                            className="bg-federal-navy hover:bg-federal-navy/90 text-white font-medium px-4 hidden sm:inline-flex"
+                            className="bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium px-4 hidden sm:inline-flex"
                             asChild
                         >
                             <Link href="#access">
@@ -98,14 +98,14 @@ export function Navigation() {
                                             key={link.href}
                                             href={link.href}
                                             onClick={() => setSheetOpen(false)}
-                                            className="text-lg font-medium text-slate-700 hover:text-federal-navy transition-colors py-2"
+                                            className="text-lg font-medium text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100 transition-colors py-2"
                                         >
                                             {link.label}
                                         </Link>
                                     ))}
                                     <hr className="my-4" />
                                     <Button
-                                        className="w-full bg-federal-navy hover:bg-federal-navy/90"
+                                        className="w-full bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white"
                                         asChild
                                     >
                                         <Link href="#access" onClick={() => setSheetOpen(false)}>
