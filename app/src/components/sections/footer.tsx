@@ -15,10 +15,10 @@ const FOOTER_LINKS = {
     regulations: {
         title: 'Regulations',
         links: [
-            { label: 'FAR', href: '/search?q=FAR' },
-            { label: 'DFARS', href: '/search?q=DFARS' },
-            { label: 'VAAR', href: '/search?q=VAAR' },
-            { label: 'All Regulations', href: '/search' },
+            { label: 'All Regulations', href: '/regulations' },
+            { label: 'FAR', href: '/search?regulation=FAR' },
+            { label: 'DFARS', href: '/search?regulation=DFARS' },
+            { label: 'VAAR', href: '/search?regulation=VAAR' },
         ],
     },
     company: {
